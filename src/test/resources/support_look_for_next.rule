@@ -1,0 +1,10 @@
+
+// test go next if no match
+
+@start      = rule;
+
+rule        =  @carer1 @carer2 r3
+
+r1          = 带 | 领
+r2          = 去
+r3          = 值班室

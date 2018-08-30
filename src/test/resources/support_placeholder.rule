@@ -1,0 +1,11 @@
+@start = rule;
+
+//rule = r1 <foodname> r2;
+
+rule = (r3 | <first>) *2(<second>) (r4 <third> r5)
+
+r1 = I want;
+r2 = please;
+r3 = a;
+r4 = b;
+r5 = c;

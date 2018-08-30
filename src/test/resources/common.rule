@@ -1,0 +1,7 @@
+@start      = rule;
+
+
+rule        = guide place;
+
+guide       = 去 | 送去 | 到 | 送到 | 带我去 | 那我去 | 我要去 | 我想去;
+place       = 会议室;

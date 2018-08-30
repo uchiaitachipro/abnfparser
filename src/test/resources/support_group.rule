@@ -1,0 +1,9 @@
+//test group grammer
+
+@start      = rule;
+
+
+rule        = r1 ((r1 | r2) (r2 r1)) r2 r1;
+
+r1          = a;
+r2          = b;

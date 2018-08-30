@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="abnfparser:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/abnfparser_jar</output-path>
+    <root id="archive" name="abnfparser.jar">
+      <element id="module-output" name="abnfparser" />
+    </root>
+  </artifact>
+</component>

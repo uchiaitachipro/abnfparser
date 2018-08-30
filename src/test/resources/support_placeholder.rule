@@ -1,10 +1,11 @@
 @start = rule;
 
 //rule = r1 <foodname> r2;
+//rule = (r3 | <first>) *2(<second>) (r4 <third> r5)
 
-rule = (r3 | <first>) *2(<second>) (r4 <third> r5)
+rule = @carer1 @care(<fifth>)
 
-r1 = I want;
+r1 = Iwant;
 r2 = please;
 r3 = a;
 r4 = b;

@@ -67,7 +67,7 @@ public class IParseResultImpl implements IParseResult {
             sb.append(word.getValue());
         }
         data.clear();
-        data.add(new ResultNode(type,sb.toString()));
+        data.add(new ResultNode(type,sb.toString(),data.get(0).getStartIndex()));
     }
 
     /**

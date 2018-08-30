@@ -48,17 +48,28 @@ public class TestPlaceHolder {
                         }
                     });
 
+            MatchFactory.getInstance().registerPlaceholder("fifth", new PlaceHolderRegister.ICallback() {
+                @Override
+                public String getValue(String label) {
+                    return "uchia";
+                }
+            });
+
 //            String[] testGroup = new String[]{
 //                    "Iwantmilkplease",
 //                    "Iwantwaterplease",
 //                    "Iwantplease"
 //            };
 
+//            String[] testGroup = new String[]{
+//                    "abec",
+//                    "dbec",
+//                    "dabcabcbec",
+//                    "dabcbec",
+//            };
+
             String[] testGroup = new String[]{
-                    "abec",
-                    "dbec",
-                    "dabcabcbec",
-                    "dabcbec",
+                    "defakdkduchia"
             };
 
             int count = 0;
@@ -66,7 +77,7 @@ public class TestPlaceHolder {
                  MatchFactory.ResultPair<IParseResult,String> result =  MatchFactory.getInstance()
                          .executeSceneSentence("food",testGroup[i]);
 
-                 if (result != null && !result.getKey().isSuccess()){
+                 if (result == null || !result.getKey().isSuccess()){
                      continue;
                  }
 

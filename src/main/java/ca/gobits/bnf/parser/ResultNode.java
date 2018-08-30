@@ -5,11 +5,14 @@ public class ResultNode {
     private String key;
     private String value;
 
+    private int startIndex;
+
     public ResultNode(){}
 
-    public ResultNode(String key,String value){
+    public ResultNode(String key,String value,int startIndex){
         this.key = key;
         this.value = value;
+        this.startIndex = startIndex;
     }
 
     public String getKey() {
@@ -26,6 +29,14 @@ public class ResultNode {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public void setStartIndex(int startIndex) {
+        this.startIndex = startIndex;
     }
 
 

@@ -1,8 +1,10 @@
 import ca.gobits.bnf.MatchFactory;
+import ca.gobits.bnf.extention.PlaceHolderRegister;
 import ca.gobits.bnf.io.IOUtils;
 import ca.gobits.bnf.parser.IParseResult;
 
 import java.io.InputStream;
+import java.util.*;
 
 public class TestMultiEntrance {
 
@@ -15,47 +17,27 @@ public class TestMultiEntrance {
             String content = IOUtils.toString(in);
             MatchFactory.getInstance().setSceneRule("chat", content, null);
 
+            List<String> rootName = new ArrayList<>();
+            rootName.add( "可乐");
+            MatchFactory.getInstance().registerPlaceholder("robot_name",
+                    new PlaceHolderRegister.ICallback() {
+                        @Override
+                        public Collection<String> getValue(String label) {
+                            return rootName;
+                        }
+                    });
+
+            List<String> boatPosition = new ArrayList<>();
+            rootName.add("研发室");
+            MatchFactory.getInstance().registerPlaceholder("boat_position", new PlaceHolderRegister.ICallback() {
+                @Override
+                public Collection<String> getValue(String label) {
+                    return boatPosition;
+                }
+            });
+
             String[] testGroup = new String[]{
-                    "小声",
-                    "小声点",
-                    "小点声",
-                    "声音小",
-                    "声音再小一点",
-                    "声音再小点",
-                    "声音小点",
-                    "声音小一点",
-                    "再小一点儿",
-                    "太吵了",
-                    "小点儿声",
-                    "小点声儿",
-                    "音量调到最小",
-                    "最小声",
-                    "声音最小",
-                    "音量最小",
-                    "最小音量",
-                    "最低音量",
-                    "静音",
-                    "你不要说",
-                    "安静",
-                    "最大声",
-                    "声音最大",
-                    "音量最大",
-                    "最大音量",
-                    "大点声",
-                    "大声",
-                    "大声点",
-                    "声音大",
-                    "声音再大一点",
-                    "声音再大点",
-                    "声音大点",
-                    "声音大一点",
-                    "再大点",
-                    "再大一点",
-                    "我听不见",
-                    "听不见",
-                    "大点儿声",
-                    "大声点儿",
-                    "大点声儿"
+                "我找不到研发室了"
             };
 
             int count = 0;

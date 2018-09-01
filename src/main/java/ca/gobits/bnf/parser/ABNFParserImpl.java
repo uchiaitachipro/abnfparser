@@ -472,6 +472,32 @@ public class ABNFParserImpl<T> implements IParser<T> {
         if (!this.stack.isEmpty()) {
             ParserContext holder = this.stack.peek();
 
+            // 再次检查@care修饰的关键词在匹配到最后之后，是否还有必要的条件待匹配，排除可以重复0-n的
+            if (holder.isGoNextIfNoMatch()
+                    && holder.hasAndConditions()) {
+
+                while (!holder.isComplete()) {
+                    SymbolMetaData metaData = holder
+                            .getAndConditions()
+                            .getSymbols()
+                            .get(holder.getCurrentPosition() + 1);
+
+                    if (metaData.getMaxRepetitionTimes() > 0 && metaData.getMinRepetitionTimes() == 0) {
+                        holder.getNextAndConditionSymbol();
+                    } else {
+                        break;
+                    }
+                }
+
+                while (!this.stack.isEmpty()) {
+                    if (!this.stack.peek().isComplete()) {
+                        break;
+                    }
+                    this.stack.pop();
+                }
+            }
+
+
             Token nextToken = token.getNextToken();
             token = nextToken == null ? token : nextToken;
             holder.advanceToken(token);
@@ -555,7 +581,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
                 int maxRepetitionCount = holder.getMaxRepetition() - 1;
                 maxRepetitionCount = maxRepetitionCount >= 0 ? maxRepetitionCount : 0;
-                if (holder.getCurrentRepetition() <= maxRepetitionCount){
+                if (holder.getCurrentRepetition() < maxRepetitionCount) {
                     break;
                 }
             }
@@ -565,7 +591,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 break;
             }
 
-          this.stack.pop();
+            this.stack.pop();
 
 //
 //            if (this.stack.peek().getRepetition() != SymbolMetaData.Repetition.NONE) {
@@ -647,6 +673,46 @@ public class ABNFParserImpl<T> implements IParser<T> {
         return length;
     }
 
+    private boolean isLeafNode(ParserContext context) {
+
+        if (context == null || !context.isComplete()) {
+            return false;
+        }
+
+        if (context.getAndConditions() == null) {
+            return false;
+        }
+
+        List<SymbolMetaData> symbols = context.getAndConditions().getSymbols();
+        if (symbols.size() == 1) {
+            return this.sequenceMap.get(symbols.get(0).getName()) == null;
+        }
+        return false;
+    }
+
+    private boolean isPlaceHolder(ParserContext context){
+        if (context == null){
+            return false;
+        }
+
+        if (context.getAndConditions() == null) {
+            return false;
+        }
+
+        List<SymbolMetaData> symbolMetaData = context.getAndConditions().getSymbols();
+        if (symbolMetaData.size() == 1){
+            SymbolMetaData data = symbolMetaData.get(0);
+            return data.isPlaceholder();
+        }
+
+        return false;
+    }
+
+    private String getPlaceHolderValue(ParserContext context){
+        SymbolMetaData symbol = context.getAndConditions().getSymbols().get(0);
+        return PlaceHolderRegister.getInstance().getPlaceholderRealValue(symbol.getPlaceholderLabel());
+    }
+
     private void checkRepetitionTimesMoreThanMaxTimes(ParserContext context) {
 
         if (context.getCurrentRepetition() <= context.getMaxRepetition()) {
@@ -699,6 +765,35 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
     private void recordMatchWords(ParserContext context) {
 
+        int currentPosition = context.getCurrentPosition();
+
+        // 统计占位符内容,他的ResultNode中的key不再是表达式，而是对应的label
+        if (context.hasAndConditions()) {
+            SymbolMetaData metaData = context.getAndConditions()
+                    .getSymbols()
+                    .get(currentPosition);
+            if (metaData.getName().equals(PLACE_HOLDER)) {
+
+                String value = PlaceHolderRegister.getInstance().getPlaceholderRealValue(
+                        metaData.getPlaceholderLabel());
+
+                if (value == null) {
+                    return;
+                }
+
+                matchWords.add(
+                        new ResultNode(
+                                metaData.getPlaceholderLabel(),
+                                value,
+                                context.getOffset() - value.length()));
+                return;
+            }
+        }
+
+        if (!isLeafNode(context)) {
+            return;
+        }
+
         if (context.isComplete() && context.hasAndConditions()) {
             List<BNFSequence> sequences = new ArrayList<>();
             sequences.add(context.getAndConditions());
@@ -716,7 +811,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 matchWords.add(node);
             }
         }
-
     }
 
     /**
@@ -782,33 +876,11 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 break;
             }
 
-            if (holder.getOffset() == parsingString.length()
-                    && holder.isComplete()) {
-
-                List<BNFSequence> sequences = new ArrayList<>();
-                sequences.add(holder.getAndConditions());
-                int count = countAllSymbolLength(sequences);
-
-                int startIndex = holder.getOffset() - count;
-                int endIndex = holder.getOffset();
-
-                // 这里能取等的原因是offset 始终指向下一个字符串
-                if (startIndex >= 0 && endIndex <= parsingString.length()) {
-                    matchWords.add(new ResultNode(
-                            getSymbolTypeOrUUID(holder.getAndConditions()),
-                            parsingString.substring(startIndex, endIndex),startIndex));
-                }
-            }
-
-            if (parsingString.length() == 1 && holder.isComplete()) {
-
-                matchWords.add(new ResultNode(
-                        getSymbolTypeOrUUID(holder.getAndConditions()),
-                        parsingString.substring(0, 1),0));
+            recordMatchWordsInEnd(holder);
+            if (parsingString.length() == 1 && holder.isComplete()){
                 this.stack.clear();
                 break;
             }
-
 
             ParserContext popContext = this.stack.pop();
             if (!this.stack.isEmpty()) {
@@ -817,16 +889,63 @@ public class ABNFParserImpl<T> implements IParser<T> {
         }
     }
 
+    private void recordMatchWordsInEnd(ParserContext holder){
+        if (isLeafNode(holder)){
+
+            if (holder.getOffset() == parsingString.length()
+                    && holder.isComplete()) {
+
+                if (isPlaceHolder(holder)){
+                    String value = getPlaceHolderValue(holder);
+                    String label = holder.getAndConditions()
+                            .getSymbols()
+                            .get(0)
+                            .getPlaceholderLabel();
+                    matchWords.add(
+                            new ResultNode(label,value,holder.getOffset() - value.length()));
+                } else {
+
+                    List<BNFSequence> sequences = new ArrayList<>();
+                    sequences.add(holder.getAndConditions());
+                    int count = countAllSymbolLength(sequences);
+
+                    int startIndex = holder.getOffset() - count;
+                    int endIndex = holder.getOffset();
+
+                    // 这里能取等的原因是offset 始终指向下一个字符串
+                    if (startIndex >= 0 && endIndex <= parsingString.length()) {
+                        matchWords.add(new ResultNode(
+                                getSymbolTypeOrUUID(holder.getAndConditions()),
+                                parsingString.substring(startIndex, endIndex), startIndex));
+                    }
+                }
+            } else{
+                if (parsingString.length() == 1 && holder.isComplete()) {
+                    if (isPlaceHolder(holder)){
+                        String label = holder.getAndConditions()
+                                .getSymbols()
+                                .get(0)
+                                .getPlaceholderLabel();
+                        matchWords.add(new ResultNode(label,parsingString,0));
+                    }else {
+                        matchWords.add(new ResultNode(
+                                getSymbolTypeOrUUID(holder.getAndConditions()),
+                                parsingString.substring(0, 1), 0));
+                    }
+                }
+            }
+        }
+    }
+
     private String getSymbolTypeOrUUID(BNFSequence sequence) {
         StringBuilder sb = new StringBuilder();
 
         if (sequence == null || sequence.getSymbols() == null) {
-            return UUID.randomUUID().toString() + " ";
+            return UUID.randomUUID().toString();
         }
 
         for (SymbolMetaData symbol : sequence.getSymbols()) {
             sb.append(symbol.getParentSymbol());
-            sb.append(" ");
         }
 
         return sb.toString();
@@ -1135,12 +1254,24 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
                 PlaceHolderRegister.ICallback callback = PlaceHolderRegister
                         .getInstance()
-                        .getPlaceholderValue(symbol.getPlaceholderLabel());
+                        .getPlaceholderCallback(symbol.getPlaceholderLabel());
 
                 if (callback == null) {
                     return false;
                 }
-                symbolName = callback.getValue(symbol.getPlaceholderLabel());
+
+                Collection<String> names = callback.getValue(symbol.getPlaceholderLabel());
+
+                if (names != null) {
+                    for (String name : names) {
+                        if (parsingString.contains(name)) {
+                            symbolName = name;
+                            PlaceHolderRegister.getInstance().savePlaceholderValue(
+                                    symbol.getPlaceholderLabel(),
+                                    name);
+                        }
+                    }
+                }
             }
 
             String s = isQuotedString(symbolName)

@@ -20,13 +20,14 @@ public class TestGroupGrammer {
         ABNFTokenizerFactoryImpl tokenizerFactory = new ABNFTokenizerFactoryImpl();
 
 
-        String[] testGroup = new String[]{ "abba","abbab","aabab","aaaaa","",null};
+        String[] testGroup = new String[]{ "aababa","abbaba","aabab","aaaaa","",null};
 
         for (int i = 0 ; i < testGroup.length; i++){
 
             Token token = tokenizerFactory.tokens(testGroup[i]);
             IParseResult result = parser.parse(token,testGroup[i]);
             System.out.println("result : " + result.isSuccess() + " top : " + result.getTop());
+            System.out.println(result.getMatchWords());
 
         }
 

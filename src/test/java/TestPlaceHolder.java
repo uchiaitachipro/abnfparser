@@ -4,6 +4,9 @@ import ca.gobits.bnf.io.IOUtils;
 import ca.gobits.bnf.parser.IParseResult;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class TestPlaceHolder {
 
@@ -16,42 +19,52 @@ public class TestPlaceHolder {
 
             String rule = IOUtils.toString(in);
             MatchFactory.getInstance().setSceneRule("food",rule,"eat");
+            List<String> foodNames = new ArrayList<>();
+            foodNames.add("milk");
             MatchFactory.getInstance().registerPlaceholder("foodname",
                     new PlaceHolderRegister.ICallback() {
                 @Override
-                public String getValue(String label) {
-                    return "milk";
+                public Collection<String> getValue(String label) {
+                    return foodNames;
                 }
             });
 
+            List<String> firstList = new ArrayList<>();
+            firstList.add("d");
             MatchFactory.getInstance().registerPlaceholder("first",
                     new PlaceHolderRegister.ICallback() {
                 @Override
-                public String getValue(String label) {
-                    return "d";
+                public Collection<String> getValue(String label) {
+                    return firstList;
                 }
             });
 
+            List<String> second = new ArrayList<>();
+            second.add("abc");
             MatchFactory.getInstance().registerPlaceholder("second",
                     new PlaceHolderRegister.ICallback() {
                         @Override
-                        public String getValue(String label) {
-                            return "abc";
+                        public Collection<String> getValue(String label) {
+                            return second;
                         }
                     });
 
+            List<String> thirdList = new ArrayList<>();
+            thirdList.add("e");
             MatchFactory.getInstance().registerPlaceholder("third",
                     new PlaceHolderRegister.ICallback() {
                         @Override
-                        public String getValue(String label) {
-                            return "e";
+                        public Collection<String> getValue(String label) {
+                            return thirdList;
                         }
                     });
 
+            List<String> fifthList = new ArrayList<>();
+            fifthList.add("uchia");
             MatchFactory.getInstance().registerPlaceholder("fifth", new PlaceHolderRegister.ICallback() {
                 @Override
-                public String getValue(String label) {
-                    return "uchia";
+                public Collection<String> getValue(String label) {
+                    return fifthList;
                 }
             });
 
@@ -61,16 +74,16 @@ public class TestPlaceHolder {
 //                    "Iwantplease"
 //            };
 
-//            String[] testGroup = new String[]{
-//                    "abec",
-//                    "dbec",
-//                    "dabcabcbec",
-//                    "dabcbec",
-//            };
-
             String[] testGroup = new String[]{
-                    "defakdkduchia"
+                    "abec",
+                    "dbec",
+                    "dabcabcbec",
+                    "dabcbec",
             };
+
+//            String[] testGroup = new String[]{
+//                    "Iwantuchia"
+//            };
 
             int count = 0;
             for (int i = 0 ; i < testGroup.length; i++){

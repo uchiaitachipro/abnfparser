@@ -1,5 +1,6 @@
 package ca.gobits.bnf.extention;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ public class PlaceHolderRegister {
     private static volatile PlaceHolderRegister instance;
 
     private Map<String,ICallback> map = new HashMap<>();
+
+    private Map<String,String> placeHolderValues = new HashMap<>();
 
     private PlaceHolderRegister(){}
 
@@ -36,7 +39,15 @@ public class PlaceHolderRegister {
         }
     }
 
-    public ICallback getPlaceholderValue(String label){
+    public void savePlaceholderValue(String key,String value){
+        placeHolderValues.put(key,value);
+    }
+
+    public String getPlaceholderRealValue(String key){
+        return placeHolderValues.get(key);
+    }
+
+    public ICallback getPlaceholderCallback(String label){
         if (!map.containsKey(label)){
             return null;
         }
@@ -49,6 +60,6 @@ public class PlaceHolderRegister {
 
 
     public interface ICallback{
-        String getValue(String label);
+        Collection<String> getValue(String label);
     }
 }

@@ -1,9 +1,8 @@
 @start = rule;
 
 //rule = r1 <foodname> r2;
-//rule = (r3 | <first>) *2(<second>) (r4 <third> r5)
-
-rule = @carer1 @care(<fifth>)
+rule = (r3 | <first>) *2(<second>) (r4 <third> r5)
+//rule = @carer1 @care(<fifth>)
 
 r1 = Iwant;
 r2 = please;

@@ -63,11 +63,16 @@ public class IParseResultImpl implements IParseResult {
     @Override
     public void setMatchWords(String type) {
         StringBuilder sb = new StringBuilder();
+
+        if (data.size() <= 0){
+            return;
+        }
+        int startIndex = data.get(0).getStartIndex();
         for(ResultNode word : data){
             sb.append(word.getValue());
         }
         data.clear();
-        data.add(new ResultNode(type,sb.toString(),data.get(0).getStartIndex()));
+        data.add(new ResultNode(type,sb.toString(),startIndex));
     }
 
     /**

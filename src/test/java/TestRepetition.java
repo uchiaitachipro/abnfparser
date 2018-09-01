@@ -25,7 +25,7 @@ public class TestRepetition {
             String rule = IOUtils.toString(in);
             MatchFactory.getInstance().setRule(key, rule);
 
-            String[] testGroup = new String[]{"aab", "b", "aaaaaaab", "c"};
+//            String[] testGroup = new String[]{"aab", "b", "aaaaaaab", "c"};
 //        String[] testGroup = new String[]{"acab","b","ab","cb","aaaaaaaaaa","ccc"};
 //        String[] testGroup = {"bbbabbcbcc"};
 //        String[] testGroup = {"abcab"};
@@ -46,16 +46,16 @@ public class TestRepetition {
 //                    "bbbbb",
 //                    "abab",
 //            };
-//            String[] testGroup = new String[]{
-//                    "bbbbb",
-//                    "bbbbbb",
-//                    "bbbb",
-//                    "abbbbb",
-//                    "aabbbbb",
-//                    "bbbbbc",
-//                    "bbbbbcc",
-//                    "bbbbbccc"
-//            };
+            String[] testGroup = new String[]{
+                    "bbbbb",
+                    "bbbbbb",
+                    "bbbb",
+                    "abbbbb",
+                    "aabbbbb",
+                    "bbbbbc",
+                    "bbbbbcc",
+                    "bbbbbccc"
+            };
 
             for (int i = 0; i < testGroup.length; i++) {
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key, testGroup[i]);

@@ -24,17 +24,17 @@ public class TestWildcard {
 //
 //            };
 
-//            String[] testGroup = new String[]{
+            String[] testGroup = new String[]{
+                    // true
+                    "ababaabababaab",
+//                    // false
+                    "abababababababa",
 //                    // true
-//                    "ababaabababaab",
-////                    // false
-//                    "abababababababa",
-////                    // true
-//                    "abababaab",
-////                    // true
-//                    "aabbbababaab"
-//
-//            };
+                    "abababaab",
+//                    // true
+                    "aabbbababaab"
+
+            };
 
 //            String[] testGroup = new String[]{
 //                    "ba",
@@ -47,16 +47,16 @@ public class TestWildcard {
 //            String[] testGroup = new String[] {"你好能带我去值班室吗"};
 
 //            String[] testGroup = new String[]{
-//                "abvcba",
-//                "ahdba",
-//                "aab",
+////                "abvcba",
+////                "ahdba",
+////                "aab",
 //                "aba"
 //            };
 
-            String[] testGroup = new String[]{
-                    //true
-                    "aabcdab"
-            };
+//            String[] testGroup = new String[]{
+//                    //true
+//                    "aabcdab"
+//            };
 
             for (int i = 0; i < testGroup.length; i++) {
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key, testGroup[i]);

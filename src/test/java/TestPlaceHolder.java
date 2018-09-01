@@ -68,18 +68,18 @@ public class TestPlaceHolder {
                 }
             });
 
-//            String[] testGroup = new String[]{
-//                    "Iwantmilkplease",
-//                    "Iwantwaterplease",
-//                    "Iwantplease"
-//            };
-
             String[] testGroup = new String[]{
-                    "abec",
-                    "dbec",
-                    "dabcabcbec",
-                    "dabcbec",
+                    "Iwantmilkplease",
+                    "Iwantwaterplease",
+                    "Iwantplease"
             };
+
+//            String[] testGroup = new String[]{
+//                    "abec",
+//                    "dbec",
+//                    "dabcabcbec",
+//                    "dabcbec",
+//            };
 
 //            String[] testGroup = new String[]{
 //                    "Iwantuchia"

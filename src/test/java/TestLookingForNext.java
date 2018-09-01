@@ -18,10 +18,10 @@ public class TestLookingForNext {
 
             MatchFactory.getInstance().setRule(key,rule);
             String[] testGroup = new String[] {
-                    "乐乐带我去值班室",
+                    "乐乐，带我去值班室",
                     "了了领我去值班室",
                     "可可请你去值班室",
-                    "了了领我go值班室"
+                    "了了领我去值班室"
             };
             for (int i = 0 ; i < testGroup.length; i++){
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key,testGroup[i]);
@@ -30,7 +30,7 @@ public class TestLookingForNext {
             }
 
             IParseResult result = MatchFactory.getInstance().executeRule(
-                    "@care(带|领) @care(去) 值班室;go",
+                    "@care(带|领) @care(去) (值班室);go",
                     "乐乐带我去值班室",
                     false);
             System.out.println("result : " + result.isSuccess() + " top : " + result.getTop());

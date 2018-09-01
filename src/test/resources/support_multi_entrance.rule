@@ -1,6 +1,6 @@
-@exec = voice_rule1;go_where_scene
+//@exec = voice_rule1;go_where_scene
 @exec = voice_rule2;go_where_scene
-@exec = voice_rule3;go_where_scene
+//@exec = voice_rule3;go_where_scene
 
 voice_rule1 = @carer1 position r10;
 voice_rule2 = @carer2 position *($);

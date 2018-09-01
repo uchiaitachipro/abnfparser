@@ -8,8 +8,8 @@ import java.io.InputStream;
 public class TestCommon {
 
     public static void main(String[] args){
-        testCommon();
-//        testExecuteRuleDynamically();
+//        testCommon();
+        testExecuteRuleDynamically();
     }
 
     private static void testExecuteRuleDynamically(){
@@ -34,10 +34,11 @@ public class TestCommon {
                         "智能电动窗帘、环境健康医疗等多元化家居产品的智能化。");
 
         MatchFactory.ResultPair<IParseResult,String> parseResult =
-                MatchFactory.getInstance().executeSceneSentence("chat","介绍一下巨人");
+                MatchFactory.getInstance().executeSceneSentence("chat","巨人公司是做什么");
 
         if (parseResult != null){
-            System.out.println("result : " + parseResult.getKey().isSuccess() + " top : " + parseResult.getKey().getTop());
+            System.out.println("result : " + parseResult.getKey().isSuccess() + " top : "
+                    + parseResult.getKey().getTop());
             System.out.println(parseResult.getKey().getMatchWords());
         }
 

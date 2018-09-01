@@ -28,8 +28,9 @@ public class TestMultiEntrance {
                     });
 
             List<String> boatPosition = new ArrayList<>();
-            rootName.add("研发室");
-            MatchFactory.getInstance().registerPlaceholder("boat_position", new PlaceHolderRegister.ICallback() {
+            boatPosition.add("研发室");
+            MatchFactory.getInstance().registerPlaceholder("boat_position",
+                    new PlaceHolderRegister.ICallback() {
                 @Override
                 public Collection<String> getValue(String label) {
                     return boatPosition;

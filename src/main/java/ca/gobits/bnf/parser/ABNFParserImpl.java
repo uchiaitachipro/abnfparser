@@ -141,30 +141,14 @@ public class ABNFParserImpl<T> implements IParser<T> {
     private IParseResult parseSequences(final Token startToken) {
 
         boolean success = false;
-        Token maxMatchToken = startToken;
-        Token errorToken = null;
 
         IParseResultImpl result = new IParseResultImpl();
         result.setTop(startToken);
 
         while (!this.stack.isEmpty()) {
-
             ParserContext holder = this.stack.peek();
 
-            if (holder.getState() == ParserContext.ParserState.EMPTY) {
-
-                this.stack.pop();
-                Token token = this.stack.peek().getCurrentToken();
-                if (!isEmpty(token)) {
-                    rewindToNextSymbol();
-                } else {
-                    success = true;
-                    https:
-                    errorToken = null;
-                    rewindToNextSequence();
-                }
-
-            } else if (holder.getState() == ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION) {
+            if (holder.getState() == ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION) {
 
                 processNoMatchWithZeroRepetition();
 
@@ -175,7 +159,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
             } else if (holder.getState() == ParserContext.ParserState
                     .NO_MATCH_WITH_ZERO_REPETITION_LOOKING_FOR_FIRST_MATCH) {
 
-                maxMatchToken = processNoMatchWithZeroRepetitionLookingForFirstMatch();
+                processNoMatchWithZeroRepetitionLookingForFirstMatch();
 
             } else if (holder.getState() == ParserContext.ParserState.MATCH) {
 
@@ -185,8 +169,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     return wildcardResult;
                 }
 
-                maxMatchToken = processMatch();
-                errorToken = null;
+                processMatch();
                 success = true;
 
             } else if (holder.getState() == ParserContext.ParserState
@@ -196,8 +179,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
             } else if (holder.getState() == ParserContext.ParserState.NO_MATCH) {
 
-                Token eToken = processNoMatch();
-                errorToken = updateErrorToken(errorToken, eToken);
+                processNoMatch();
                 success = false;
 
             } else if (holder.getState() == ParserContext.ParserState
@@ -219,7 +201,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     }
 
                     if (this.stack.isEmpty()) {
-                        errorToken = null;
                         success = true;
                         break;
                     } else {
@@ -234,10 +215,8 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     if (finalContext.isComplete() && finalContext.getOffset() == parsingString.length()) {
                         this.stack.clear();
                         if (finalContext.getCurrentRepetition() >= finalContext.getMaxRepetition()) {
-                            errorToken = null;
                             success = true;
                         } else {
-                            errorToken = updateErrorToken(errorToken, errorToken);
                             success = false;
                         }
                         break;
@@ -250,7 +229,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
             }
         }
 
-        updateResult(result, maxMatchToken, errorToken, success);
+        updateResult(result, success);
         parsingString = null;
         return result;
     }
@@ -258,32 +237,14 @@ public class ABNFParserImpl<T> implements IParser<T> {
     /**
      * Update BNFParserResult.
      *
-     * @param result        -
-     * @param maxMatchToken -
-     * @param errorToken    -
-     * @param success       -
+     * @param result  -
+     * @param success -
      */
     private void updateResult(
             final IParseResultImpl result,
-            final Token maxMatchToken,
-            final Token errorToken,
             final boolean success) {
-
-        boolean succ = success;
-        Token errToken = errorToken;
-
-        if (maxMatchToken != null && maxMatchToken.getNextToken() != null) {
-
-            if (errorToken == null) {
-                errToken = maxMatchToken.getNextToken();
-            }
-
-            succ = false;
-        }
         result.setMatchResult(new LinkedList<>(matchWords));
-        result.setError(errToken);
-        result.setMaxMatchToken(maxMatchToken);
-        result.setSuccess(succ);
+        result.setSuccess(success);
 
         matchWords.clear();
     }
@@ -304,14 +265,12 @@ public class ABNFParserImpl<T> implements IParser<T> {
      *
      * @return Token
      */
-    private Token processNoMatch() {
+    private void processNoMatch() {
 
         debugPrintIndents();
         LOGGER.finer("-> no match, rewinding to next sequence");
 
         this.stack.pop();
-
-        Token token = this.stack.peek().getCurrentToken();
 
         while (!this.stack.isEmpty()) {
             ParserContext holder = this.stack.peek();
@@ -323,11 +282,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
             // 如果当前token匹配结束，next不为空则匹配下一个token
             if (holder.isGoNextIfNoMatch()) {
 
-                if (holder.getCurrentToken().getStringValue().length() == holder.getOffset()
-                        && token.getNextToken() != null) {
-                    token = token.getNextToken();
-                }
-
                 holder.setOffset(holder.getOffset() + 1);
                 holder.reset();
                 break;
@@ -338,54 +292,23 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 checkRepetitionTimesLessThanMinTimes(popContext);
             }
         }
-
-        if (!this.stack.isEmpty()) {
-            ParserContext holder = this.stack.peek();
-
-            if (holder.isGoNextIfNoMatch()) {
-                holder.advanceToken(token);
-            } else {
-                holder.resetToken();
-            }
-        }
-
-        return token;
     }
 
     /**
      * @return Token
      */
-    private Token processMatchWithZeroRepetition() {
+    private void processMatchWithZeroRepetition() {
         this.stack.pop();
-
-        Token token = this.stack.peek().getCurrentToken();
-
         debugPrintIndents();
-        LOGGER.finer("-> matched token " + token.getStringValue() + " rewind to start of repetition");
-
         rewindToOutsideOfRepetition();
-
-        if (!this.stack.isEmpty()) {
-            ParserContext holder = this.stack.peek();
-            holder.advanceToken(token.getNextToken());
-        }
-
-        return token;
     }
 
     /**
      * @return Token
      */
-    private Token processNoMatchWithZeroRepetitionLookingForFirstMatch() {
+    private void processNoMatchWithZeroRepetitionLookingForFirstMatch() {
 
         this.stack.pop();
-
-        Token token = this.stack.peek().getCurrentToken();
-
-        debugPrintIndents();
-        LOGGER.finer("-> no match Zero Or More Looking for First Match token "
-                + debug(token) + " rewind outside of Repetition");
-
 
         while (!this.stack.isEmpty()) {
             ParserContext holder = this.stack.peek();
@@ -444,13 +367,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 this.stack.peek().setOffset(holder.getOffset());
             }
         }
-
-        if (!this.stack.isEmpty()) {
-            ParserContext holder = this.stack.peek();
-            holder.advanceToken(token);
-        }
-
-        return token;
     }
 
     /**
@@ -458,14 +374,12 @@ public class ABNFParserImpl<T> implements IParser<T> {
      *
      * @return Token
      */
-    private Token processMatch() {
+    private void processMatch() {
 
         this.stack.pop();
 
-        Token token = this.stack.peek().getCurrentToken();
 
         debugPrintIndents();
-        LOGGER.finer("-> matched token " + token.getStringValue() + " rewind to next symbol");
 
         rewindToNextSymbolOrRepetition();
 
@@ -496,14 +410,8 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     this.stack.pop();
                 }
             }
-
-
-            Token nextToken = token.getNextToken();
-            token = nextToken == null ? token : nextToken;
-            holder.advanceToken(token);
         }
 
-        return token;
     }
 
     private void processAllRepetitionForNext() {
@@ -527,7 +435,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 if (holder.getRepetition() != SymbolMetaData.Repetition.NONE) {
                     holder.setCurrentRepetition(holder.getCurrentRepetition() + 1);
                     checkRepetitionTimesMoreThanMaxTimes(holder);
-//                    System.out.println(holder.getOrConditions() +  " repeat : " + holder.getCurrentRepetition());
                     this.stack.peek().setOffset(holder.getOffset());
                     checkRepetitionTimesLessThanMinTimes(holder);
                 }
@@ -544,7 +451,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
         this.stack.pop();
         ParserContext state = this.stack.peek();
-        Token token = state.getCurrentToken();
         int offset = state.getOffset();
 
         // 加速确定数量通配符的匹配，直接将offset移至下一个规则
@@ -593,11 +499,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
             this.stack.pop();
 
-//
-//            if (this.stack.peek().getRepetition() != SymbolMetaData.Repetition.NONE) {
-//                increaseOrConditionRepetition = popContext.isComplete() && popContext.hasOrConditions();
-//            }
-
         }
 
         if (!this.stack.isEmpty()) {
@@ -637,7 +538,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                 holder.reset();
             }
 
-            holder.advanceToken(token);
             holder.setOffset(offset);
         }
     }
@@ -690,8 +590,8 @@ public class ABNFParserImpl<T> implements IParser<T> {
         return false;
     }
 
-    private boolean isPlaceHolder(ParserContext context){
-        if (context == null){
+    private boolean isPlaceHolder(ParserContext context) {
+        if (context == null) {
             return false;
         }
 
@@ -700,7 +600,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
         }
 
         List<SymbolMetaData> symbolMetaData = context.getAndConditions().getSymbols();
-        if (symbolMetaData.size() == 1){
+        if (symbolMetaData.size() == 1) {
             SymbolMetaData data = symbolMetaData.get(0);
             return data.isPlaceholder();
         }
@@ -708,7 +608,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
         return false;
     }
 
-    private String getPlaceHolderValue(ParserContext context){
+    private String getPlaceHolderValue(ParserContext context) {
         SymbolMetaData symbol = context.getAndConditions().getSymbols().get(0);
         return PlaceHolderRegister.getInstance().getPlaceholderRealValue(symbol.getPlaceholderLabel());
     }
@@ -737,7 +637,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
     private void processMatchPartiallyInSequence() {
         this.stack.pop();
         ParserContext state = this.stack.peek();
-        Token token = state.getCurrentToken();
 
         // 统计匹配的叶子节点以及其对应的父节点的符号
         recordMatchWords(state);
@@ -758,7 +657,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
         if (!this.stack.isEmpty()) {
             ParserContext holder = this.stack.peek();
-            holder.advanceToken(token);
             holder.setOffset(offset);
         }
     }
@@ -818,20 +716,20 @@ public class ABNFParserImpl<T> implements IParser<T> {
      */
     private void processNoMatchWithZeroRepetition() {
 
-        debugPrintIndents();
-        LOGGER.finer("-> " + ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION
-                + ", rewind to next symbol");
+//        debugPrintIndents();
+//        LOGGER.finer("-> " + ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION
+//                + ", rewind to next symbol");
 
         this.stack.pop();
 
-        Token token = this.stack.peek().getCurrentToken();
+//        Token token = this.stack.peek().getCurrentToken();
 
         rewindToNextSymbol();
 
-        if (!this.stack.isEmpty()) {
-            ParserContext holder = this.stack.peek();
-            holder.advanceToken(token);
-        }
+//        if (!this.stack.isEmpty()) {
+//            ParserContext holder = this.stack.peek();
+//            holder.advanceToken(token);
+//        }
     }
 
     /**
@@ -877,7 +775,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
             }
 
             recordMatchWordsInEnd(holder);
-            if (parsingString.length() == 1 && holder.isComplete()){
+            if (parsingString.length() == 1 && holder.isComplete()) {
                 this.stack.clear();
                 break;
             }
@@ -889,20 +787,20 @@ public class ABNFParserImpl<T> implements IParser<T> {
         }
     }
 
-    private void recordMatchWordsInEnd(ParserContext holder){
-        if (isLeafNode(holder)){
+    private void recordMatchWordsInEnd(ParserContext holder) {
+        if (isLeafNode(holder)) {
 
             if (holder.getOffset() == parsingString.length()
                     && holder.isComplete()) {
 
-                if (isPlaceHolder(holder)){
+                if (isPlaceHolder(holder)) {
                     String value = getPlaceHolderValue(holder);
                     String label = holder.getAndConditions()
                             .getSymbols()
                             .get(0)
                             .getPlaceholderLabel();
                     matchWords.add(
-                            new ResultNode(label,value,holder.getOffset() - value.length()));
+                            new ResultNode(label, value, holder.getOffset() - value.length()));
                 } else {
 
                     List<BNFSequence> sequences = new ArrayList<>();
@@ -919,15 +817,15 @@ public class ABNFParserImpl<T> implements IParser<T> {
                                 parsingString.substring(startIndex, endIndex), startIndex));
                     }
                 }
-            } else{
+            } else {
                 if (parsingString.length() == 1 && holder.isComplete()) {
-                    if (isPlaceHolder(holder)){
+                    if (isPlaceHolder(holder)) {
                         String label = holder.getAndConditions()
                                 .getSymbols()
                                 .get(0)
                                 .getPlaceholderLabel();
-                        matchWords.add(new ResultNode(label,parsingString,0));
-                    }else {
+                        matchWords.add(new ResultNode(label, parsingString, 0));
+                    } else {
                         matchWords.add(new ResultNode(
                                 getSymbolTypeOrUUID(holder.getAndConditions()),
                                 parsingString.substring(0, 1), 0));
@@ -1062,7 +960,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     ParserContext.ParserState state = getParserState(
                             holder,
                             symbol,
-                            currentToken,
                             repetition);
                     addParserState(state);
                 }
@@ -1093,7 +990,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
             IParseResultImpl result = new IParseResultImpl();
             result.setMatchResult(new LinkedList<>(matchWords));
             result.setError(null);
-            result.setMaxMatchToken(context.getCurrentToken());
+//            result.setMaxMatchToken(context.getCurrentToken());
             result.setSuccess(true);
             this.wildcardResult = result;
             this.stack.clear();
@@ -1165,29 +1062,29 @@ public class ABNFParserImpl<T> implements IParser<T> {
      *
      * @param holder     -
      * @param symbol     -
-     * @param token      -
      * @param repetition -
      * @return ParserState
      */
     private ParserContext.ParserState getParserState(
             final ParserContext holder,
             final SymbolMetaData symbol,
-            final Token token,
             final ParserContext.ParserRepetition repetition) {
 
         ParserContext.ParserState state = ParserContext.ParserState.NO_MATCH;
 
         String symbolName = symbol.getName();
 
-        if (symbolName.equals("Empty")) {
-
-            state = ParserContext.ParserState.EMPTY;
-
-        } else if (isMatch(symbolName, token)) {
-
-            state = ParserContext.ParserState.MATCH;
-
-        } else if (repetition == ParserContext.ParserRepetition.ZERO_OR_MORE) {
+//        if (symbolName.equals("Empty")) {
+//
+//            state = ParserContext.ParserState.EMPTY;
+//
+//        }
+//        else if (isMatch(symbolName, token)) {
+//
+//            state = ParserContext.ParserState.MATCH;
+//
+//        }
+        if (repetition == ParserContext.ParserRepetition.ZERO_OR_MORE) {
 
             state = ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION;
 
@@ -1196,7 +1093,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
             boolean finded = false;
 
-            if (isMatchPartiallyInSequence(holder, symbol, token)) {
+            if (isMatchPartiallyInSequence(holder, symbol)) {
                 finded = true;
             }
 
@@ -1208,7 +1105,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
             }
 
 
-        } else if (isMatchPartiallyInSequence(holder, symbol, token)) {
+        } else if (isMatchPartiallyInSequence(holder, symbol)) {
 
             state = holder.getOffset() == parsingString.length()
                     ? ParserContext.ParserState.MATCH
@@ -1220,80 +1117,79 @@ public class ABNFParserImpl<T> implements IParser<T> {
     }
 
 
-    /**
-     * @param symbolName -
-     * @param token      -
-     * @return boolean
-     */
-    private boolean isMatch(final String symbolName, final Token token) {
-
-        boolean match = false;
-
-        if (token != null) {
-            String s = isQuotedString(symbolName)
-                    ? symbolName.substring(1, symbolName.length() - 1)
-                    : symbolName;
-            match = s.equals(token.getStringValue()) || isQuotedString(symbolName, token)
-                    || isNumber(symbolName, token);
-        }
-
-        return match;
-    }
+//    /**
+//     * @param symbolName -
+//     * @param token      -
+//     * @return boolean
+//     */
+//    private boolean isMatch(final String symbolName, final Token token) {
+//
+//        boolean match = false;
+//
+//        if (token != null) {
+//            String s = isQuotedString(symbolName)
+//                    ? symbolName.substring(1, symbolName.length() - 1)
+//                    : symbolName;
+//            match = s.equals(token.getStringValue()) || isQuotedString(symbolName, token)
+//                    || isNumber(symbolName, token);
+//        }
+//
+//        return match;
+//    }
 
     private boolean isMatchPartiallyInSequence(
             final ParserContext holder,
-            SymbolMetaData symbol,
-            Token token) {
+            SymbolMetaData symbol) {
 
         boolean match = false;
 
-        if (token != null) {
-            String symbolName = symbol.getName();
+//        if (token != null) {
+        String symbolName = symbol.getName();
 
-            if (symbolName.equals(PLACE_HOLDER)) {
+        if (symbolName.equals(PLACE_HOLDER)) {
 
-                PlaceHolderRegister.ICallback callback = PlaceHolderRegister
-                        .getInstance()
-                        .getPlaceholderCallback(symbol.getPlaceholderLabel());
+            PlaceHolderRegister.ICallback callback = PlaceHolderRegister
+                    .getInstance()
+                    .getPlaceholderCallback(symbol.getPlaceholderLabel());
 
-                if (callback == null) {
-                    return false;
-                }
-
-                Collection<String> names = callback.getValue(symbol.getPlaceholderLabel());
-
-                if (names != null) {
-                    for (String name : names) {
-                        if (parsingString.contains(name)) {
-                            symbolName = name;
-                            PlaceHolderRegister.getInstance().savePlaceholderValue(
-                                    symbol.getPlaceholderLabel(),
-                                    name);
-                        }
-                    }
-                }
-            }
-
-            String s = isQuotedString(symbolName)
-                    ? symbolName.substring(1, symbolName.length() - 1)
-                    : symbolName;
-
-            if ((s.length() + holder.getOffset()) > parsingString.length()) {
+            if (callback == null) {
                 return false;
             }
 
-            match = s.equals(parsingString.substring(
-                    holder.getOffset(),
-                    holder.getOffset() + s.length()));
+            Collection<String> names = callback.getValue(symbol.getPlaceholderLabel());
 
-            if (s.equals(WILDCARD_SYMBOL)) {
-                match = true;
-            }
-
-            if (match) {
-                holder.setOffset(holder.getOffset() + s.length());
+            if (names != null) {
+                for (String name : names) {
+                    if (parsingString.contains(name)) {
+                        symbolName = name;
+                        PlaceHolderRegister.getInstance().savePlaceholderValue(
+                                symbol.getPlaceholderLabel(),
+                                name);
+                    }
+                }
             }
         }
+
+        String s = isQuotedString(symbolName)
+                ? symbolName.substring(1, symbolName.length() - 1)
+                : symbolName;
+
+        if ((s.length() + holder.getOffset()) > parsingString.length()) {
+            return false;
+        }
+
+        match = s.equals(parsingString.substring(
+                holder.getOffset(),
+                holder.getOffset() + s.length()));
+
+        if (s.equals(WILDCARD_SYMBOL)) {
+            match = true;
+        }
+
+        if (match) {
+            holder.setOffset(holder.getOffset() + s.length());
+        }
+//        }
 
         return match;
     }

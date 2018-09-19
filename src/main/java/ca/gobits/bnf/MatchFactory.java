@@ -19,6 +19,10 @@ public class MatchFactory {
 
     Map<String,List<IParser>> scenesMap = new LRUCache<>(512);
 
+    private MatchFactory(){
+
+    }
+
     public static MatchFactory getInstance(){
         if (instance == null){
             synchronized (MatchFactory.class){

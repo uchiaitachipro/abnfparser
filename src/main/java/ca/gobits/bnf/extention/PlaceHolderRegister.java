@@ -30,6 +30,10 @@ public class PlaceHolderRegister {
             return;
         }
 
+        if (map.containsKey(label)){
+            throw new IllegalArgumentException("This label has binded callback,please chose another label");
+        }
+
         map.put(label,callback);
     }
 

@@ -151,7 +151,7 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
             list.add(s.trim());
         }
 
-        sortSequenceNames(list);
+//        sortSequenceNames(list);
 
         return list;
     }
@@ -382,21 +382,22 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
     }
 
 
-    /**
-     * @param list -
-     */
-    private void sortSequenceNames(final List<String> list) {
-        Collections.sort(list, new Comparator<String>() {
-            @Override
-            public int compare(final String o1, final String o2) {
-                if (o1.equals("Empty")) {
-                    return 1;
-                } else if (o2.equals("Empty")) {
-                    return -1;
-                }
-                return 0;
-            }
-        });
-    }
+//    /**
+//     * 对或排序中的字符串排序，使字符数量多的始终优先比较。
+//     * 待匹配       aabcdba
+//     * rule        = r3 (r5 | r6) $ r4
+//     * r5          = ab;
+//     * r6          = abc;
+//     *
+//     * 或中用错误的字符串匹配，导致整体不匹配
+//     */
+//    private void sortSequenceNames(final List<String> list) {
+//        Collections.sort(list, new Comparator<String>() {
+//            @Override
+//            public int compare(final String o1, final String o2) {
+//                return o2.length() - o1.length();
+//            }
+//        });
+//    }
 
 }

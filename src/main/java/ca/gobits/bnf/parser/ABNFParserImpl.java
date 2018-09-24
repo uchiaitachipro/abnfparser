@@ -1117,26 +1117,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
     }
 
 
-//    /**
-//     * @param symbolName -
-//     * @param token      -
-//     * @return boolean
-//     */
-//    private boolean isMatch(final String symbolName, final Token token) {
-//
-//        boolean match = false;
-//
-//        if (token != null) {
-//            String s = isQuotedString(symbolName)
-//                    ? symbolName.substring(1, symbolName.length() - 1)
-//                    : symbolName;
-//            match = s.equals(token.getStringValue()) || isQuotedString(symbolName, token)
-//                    || isNumber(symbolName, token);
-//        }
-//
-//        return match;
-//    }
-
     private boolean isMatchPartiallyInSequence(
             final ParserContext holder,
             SymbolMetaData symbol) {
@@ -1263,6 +1243,7 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     goNextIfNoMatch);
         } else {
             debug(sequences, token, parserRepetition);
+            sortOrConditions(sequences);
             ParserContext state = new ParserContext(
                     sequences,
                     token,
@@ -1274,6 +1255,49 @@ public class ABNFParserImpl<T> implements IParser<T> {
             state.setGoNextIfNoMatch(goNextIfNoMatch);
             this.stack.push(state);
         }
+    }
+
+    /**
+     * 对或排序中的字符串排序，使字符数量多的始终优先比较。
+     * 待匹配       aabcdba
+     * rule        = r3 (r5 | r6) $ r4
+     * r5          = ab;
+     * r6          = abc;
+     *
+     * 或中用错误的字符串匹配，导致整体不匹配
+     */
+    private void sortOrConditions(List<BNFSequence> sequences) {
+        Collections.sort(sequences, new Comparator<BNFSequence>() {
+            @Override
+            public int compare(BNFSequence o1, BNFSequence o2) {
+                return getConditionMaxLength(o2) - getConditionMaxLength(o1);
+            }
+        });
+    }
+
+    private int getConditionMaxLength(BNFSequence sequence) {
+
+        if (sequence == null || sequence.getSymbols() == null) {
+            return 0;
+        }
+        int length = 0;
+        for (SymbolMetaData symbol : sequence.getSymbols()) {
+            String name = symbol.getName();
+            List<BNFSequence> sq = this.sequenceMap.get(name);
+            if (sq == null) {
+                length += name.length();
+            } else {
+                int maxOrConditionLength = 0;
+                for (BNFSequence subSequence : sq){
+                    int count = getConditionMaxLength(subSequence);
+                    if (maxOrConditionLength < count){
+                        maxOrConditionLength = count;
+                    }
+                }
+                length += maxOrConditionLength;
+            }
+        }
+        return length;
     }
 
 

@@ -168,7 +168,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     this.stack.pop();
                     return wildcardResult;
                 }
-
                 processMatch();
                 success = true;
 
@@ -184,7 +183,9 @@ public class ABNFParserImpl<T> implements IParser<T> {
 
             } else if (holder.getState() == ParserContext.ParserState
                     .MATCH_IN_SEQUENCE_PARTICALLY) {
+
                 processMatchPartiallyInSequence();
+
             } else if (holder.getState() == ParserContext.ParserState
                     .MATCH_REPETITION_FINISHED_LOOKING_FOR_NEXT) {
                 processAllRepetitionForNext();
@@ -222,7 +223,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
                         break;
                     }
                 }
-
 
             } else {
                 processStack();
@@ -322,7 +322,8 @@ public class ABNFParserImpl<T> implements IParser<T> {
             // Repetition匹配了部分，需要回退到通配符匹配的起点
             if (holder.getRepetition() != SymbolMetaData.Repetition.NONE
                     && holder.hasAndConditions()
-                    && holder.isComplete()) {
+                    && holder.isComplete()
+                    && holder.getCurrentRepetition() < holder.getMinRepetition()) {
 
 
                 this.stack.pop();
@@ -363,9 +364,21 @@ public class ABNFParserImpl<T> implements IParser<T> {
             this.stack.pop();
 
             // 当Repetition不匹配时，需要将已匹配的字符串传递给下一个规则
-            if (!this.stack.isEmpty() && holder.hasAndConditions() && holder.isComplete()) {
-                this.stack.peek().setOffset(holder.getOffset());
+            if (!this.stack.isEmpty()) {
+
+                // 如果一个规则已经匹配结束
+                if (holder.hasAndConditions() && holder.isComplete()){
+                    this.stack.peek().setOffset(holder.getOffset());
+                    continue;
+                }
+
+                // 当一个或条件匹配成功后，需要将其匹配的offset传递给上一级
+                if (holder.hasOrConditions()){
+                    this.stack.peek().setOffset(holder.getOffset());
+                }
+
             }
+
         }
     }
 
@@ -869,24 +882,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
     }
 
     /**
-     * rewindToNextSequence.
-     */
-    private void rewindToNextSequence() {
-
-        while (!this.stack.isEmpty()) {
-            ParserContext holder = this.stack.peek();
-            if (holder.hasOrConditions()) {
-                break;
-            }
-
-            ParserContext popContext = this.stack.pop();
-            if (popContext.getRepetition() != SymbolMetaData.Repetition.NONE) {
-                checkRepetitionTimesLessThanMinTimes(popContext);
-            }
-        }
-    }
-
-    /**
      * processStack.
      */
     private void processStack() {
@@ -1071,46 +1066,23 @@ public class ABNFParserImpl<T> implements IParser<T> {
             final ParserContext.ParserRepetition repetition) {
 
         ParserContext.ParserState state = ParserContext.ParserState.NO_MATCH;
-
-        String symbolName = symbol.getName();
-
-//        if (symbolName.equals("Empty")) {
-//
-//            state = ParserContext.ParserState.EMPTY;
-//
-//        }
-//        else if (isMatch(symbolName, token)) {
-//
-//            state = ParserContext.ParserState.MATCH;
-//
-//        }
         if (repetition == ParserContext.ParserRepetition.ZERO_OR_MORE) {
-
             state = ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION;
-
         } else if (repetition == ParserContext.ParserRepetition
                 .ZERO_OR_MORE_LOOKING_FOR_FIRST_MATCH) {
-
             boolean finded = false;
-
             if (isMatchPartiallyInSequence(holder, symbol)) {
                 finded = true;
             }
-
             state = finded ? ParserContext.ParserState.MATCH_WITH_ONE_OR_MORE_REPETITION_PARTIALLY
                     : ParserContext.ParserState.NO_MATCH_WITH_ZERO_REPETITION_LOOKING_FOR_FIRST_MATCH;
-
             if (holder.getOffset() == parsingString.length()) {
                 state = ParserContext.ParserState.MATCH_REPETITION_FINISHED_LOOKING_FOR_NEXT;
             }
-
-
         } else if (isMatchPartiallyInSequence(holder, symbol)) {
-
             state = holder.getOffset() == parsingString.length()
                     ? ParserContext.ParserState.MATCH
                     : ParserContext.ParserState.MATCH_IN_SEQUENCE_PARTICALLY;
-
         }
 
         return state;
@@ -1122,8 +1094,6 @@ public class ABNFParserImpl<T> implements IParser<T> {
             SymbolMetaData symbol) {
 
         boolean match = false;
-
-//        if (token != null) {
         String symbolName = symbol.getName();
 
         if (symbolName.equals(PLACE_HOLDER)) {

@@ -2,16 +2,12 @@
 @start      = rule;
 
 
-//rule        = r1 [r2|r4] r3;
-
-rule        = [r7 | r4] *3(r6) r5 [r1 r2 r3 *r6]
-
+rule        = r1 [r2|r4] r3;
+rule        = r1 ((r2 [r6]) | (r4)) r3;
 
 r1          = 水可;
 r2          = 载;
 r4          = 覆;
 r3          = 舟;
-r4          = 前几年;
-r5          = 过的很好;
-r6          = 是不是;
-r7          = 假疫苗制造者;
+r5          = 一颗赛艇;
+r6          = Naive;

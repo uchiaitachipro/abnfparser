@@ -22,9 +22,12 @@ public class TestOptional {
 //                    "水可载舟", "水可覆舟", "亦可赛艇","水可舟","水很舟"};
 //            String[] testGroup = new String[] {
 //                    "水可载舟"};
-            String[] testGroup = new String[] {
-                    "前几年是不是是不是过的很好",
-                    "假疫苗制造者过的很好水可载舟是不是是不是"
+//            };
+            String[] testGroup = new String[]{
+                    "水可载舟",
+                    "水可载Naive舟",
+                    "水可覆舟",
+                    "水可载覆舟"
             };
             for (int i = 0 ; i < testGroup.length; i++){
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key,testGroup[i]);

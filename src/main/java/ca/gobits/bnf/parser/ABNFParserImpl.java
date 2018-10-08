@@ -195,7 +195,9 @@ public class ABNFParserImpl<T> implements IParser<T> {
                     int offset = this.stack.peek().getOffset();
                     while (!this.stack.isEmpty()) {
                         ParserContext context = this.stack.peek();
-                        if (!context.isComplete()) {
+                        // 只有与条件才检查是否都匹配，
+                        // 在字符串已经完全匹配结束并且只剩下或条件没有匹配则忽略之
+                        if (context.hasAndConditions() && !context.isComplete()) {
                             break;
                         }
                         this.stack.pop();

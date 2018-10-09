@@ -25,11 +25,22 @@ public class TestRepetition {
             String rule = IOUtils.toString(in);
             MatchFactory.getInstance().setRule(key, rule);
 
-//            String[] testGroup = new String[]{"aab", "b", "aaaaaaab", "c"};
+            String[] testGroup = new String[]{"aab", "b", "aaaaaaab", "c"};
 //        String[] testGroup = new String[]{"acab","b","ab","cb","aaaaaaaaaa","ccc"};
 //        String[] testGroup = {"bbbabbcbcc"};
 //        String[] testGroup = {"abcab"};
-//        String[] testGroup = {"aabcabba","aabcabcabba","aabba","aabc","aabcabc"};
+//        String[] testGroup = {
+//                // true
+//                "aabcabba",
+//                // true
+//                "aabcabcabba",
+//                // true
+//                "aabba",
+//                // false
+//                "aabc",
+//                // false
+//                "aabcabc"
+//        };
 //        String[] testGroup = new String[] {"aacababaccb"};
 //        String[] testGroup = new String[] {"ababcabba"};
 //        String[] testGroup = new String[]{"acccabbcbcbca"};
@@ -42,20 +53,31 @@ public class TestRepetition {
 //                    "aaabbbbb",
 //                    // true
 //                    "aaabbbbbbb",
+//                    // false
 //                    "aaaa",
+//                    // false
 //                    "bbbbb",
+//                    // false
 //                    "abab",
 //            };
-            String[] testGroup = new String[]{
-                    "bbbbb",
-                    "bbbbbb",
-                    "bbbb",
-                    "abbbbb",
-                    "aabbbbb",
-                    "bbbbbc",
-                    "bbbbbcc",
-                    "bbbbbccc"
-            };
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "bbbbb",
+//                    // false
+//                    "bbbbbb",
+//                    // false
+//                    "bbbb",
+//                    // true
+//                    "abbbbb",
+//                    // false
+//                    "aabbbbb",
+//                    // true
+//                    "bbbbbc",
+//                    // true
+//                    "bbbbbcc",
+//                    // false
+//                    "bbbbbccc"
+//            };
 
             for (int i = 0; i < testGroup.length; i++) {
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key, testGroup[i]);

@@ -3,8 +3,8 @@
 @start      = rule;
 
 //rule        = r1 *2($) r2;
-rule        = r3 *5($) 3*5(r4) r5
-//rule        = r4 (r5 | *3($))
+//rule        = r3 *5($) 3*5(r4) r5
+rule        = r4 (r5 | *3($))
 //rule        = *16($);
 //rule        = @care(r1) @care(r2) *($)
 //rule        = r3 (r5 | *3($)) r4

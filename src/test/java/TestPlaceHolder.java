@@ -68,11 +68,11 @@ public class TestPlaceHolder {
                 }
             });
 
-            String[] testGroup = new String[]{
-                    "Iwantmilkplease",
-                    "Iwantwaterplease",
-                    "Iwantplease"
-            };
+//            String[] testGroup = new String[]{
+//                    "Iwantmilkplease",
+//                    "Iwantwaterplease",
+//                    "Iwantplease"
+//            };
 
 //            String[] testGroup = new String[]{
 //                    "abec",
@@ -81,9 +81,9 @@ public class TestPlaceHolder {
 //                    "dabcbec",
 //            };
 
-//            String[] testGroup = new String[]{
-//                    "Iwantuchia"
-//            };
+            String[] testGroup = new String[]{
+                    "Iwantuchia"
+            };
 
             int count = 0;
             for (int i = 0 ; i < testGroup.length; i++){

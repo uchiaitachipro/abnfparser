@@ -24,38 +24,52 @@ public class TestWildcard {
 //
 //            };
 
-            String[] testGroup = new String[]{
-                    // true
-                    "ababaabababaab",
-//                    // false
-                    "abababababababa",
+//            String[] testGroup = new String[]{
 //                    // true
-                    "abababaab",
-//                    // true
-                    "aabbbababaab"
+//                    "ababaabababaab",
+////                    // false
+//                    "abababababababa",
+////                    // true
+//                    "abababaab",
+////                    // true
+//                    "aabbbababaab"
+//
+//            };
 
+            String[] testGroup = new String[]{
+//                    // true
+//                    "ba",
+//                    // true
+//                    "babab",
+                    // false
+                    "baaba"
             };
 
 //            String[] testGroup = new String[]{
-//                    "ba",
-//                    "babab",
-//                    "baaba"
+//                    // true
+//                    "a",
+//                    // true
+//                    "asdfdfdffdfddfdf",
+//                    // false
+//                    "uwhxdfdffdfddfdjff"
 //            };
-
-//            String[] testGroup = new String[]{"a","asdfdfdffdfddfdf","uwhxdfdffdfddfdjff"};
 
 //            String[] testGroup = new String[] {"你好能带我去值班室吗"};
 
 //            String[] testGroup = new String[]{
-////                "abvcba",
-////                "ahdba",
-////                "aab",
-//                "aba"
+//                    //true
+//                    "abvcba",
+//                    //true
+//                    "ahdba",
+//                    //true
+//                    "aab",
+//                    //true
+//                    "aba"
 //            };
 
 //            String[] testGroup = new String[]{
 //                    //true
-//                    "aabcdab"
+//                    "aabcdba"
 //            };
 
             for (int i = 0; i < testGroup.length; i++) {

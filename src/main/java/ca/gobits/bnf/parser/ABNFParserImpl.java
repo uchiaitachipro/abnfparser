@@ -315,26 +315,37 @@ public class ABNFParserImpl<T> implements IParser<T> {
         while (!this.stack.isEmpty()) {
             ParserContext holder = this.stack.peek();
 
-            if (holder.getRepetition() != SymbolMetaData.Repetition.NONE
-                    && holder.hasOrConditions()
+//            if (holder.getRepetition() != SymbolMetaData.Repetition.NONE
+//                    && holder.hasOrConditions()
+//                    && !holder.isComplete()) {
+//                break;
+//            }
+
+            // 重复条件中嵌套或条件，当前条件不匹配应该给其他或条件匹配的机会
+            if (holder.hasOrConditions()
                     && !holder.isComplete()) {
                 break;
             }
 
-            // Repetition匹配了部分，需要回退到通配符匹配的起点
+
+//          // Repetition匹配了部分，需要回退到通配符匹配的起点
             if (holder.getRepetition() != SymbolMetaData.Repetition.NONE
                     && holder.hasAndConditions()
-                    && holder.isComplete()
-                    && holder.getCurrentRepetition() < holder.getMinRepetition()) {
+                    && holder.isComplete()) {
 
+                int overMatchCount = holder.getCurrentAndConditionMatchIndex() - 1;
 
-                this.stack.pop();
-                this.stack.peek().setOffset((holder.getOffset())
-                        - (holder.getCurrentAndConditionMatchIndex() - 1));
+                // Repetition重复超过字符串中的次数时，部分匹配的字符串需要回退，交给下一个规则匹配
+                //
+                if (overMatchCount > 0 || holder.getCurrentRepetition() < holder.getMinRepetition()){
+                    this.stack.pop();
+                    this.stack.peek().setOffset((holder.getOffset())
+                            - overMatchCount);
 
-                // 检查Repetition次数是否少于最小次数
-                checkRepetitionTimesLessThanMinTimes(holder);
-                break;
+                    // 检查Repetition次数是否少于最小次数
+                    checkRepetitionTimesLessThanMinTimes(holder);
+                    break;
+                }
             }
 
             if (holder.getParserRepetition() != ParserContext.ParserRepetition.NONE) {

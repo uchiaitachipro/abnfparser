@@ -28,7 +28,7 @@ public class TestMultiEntrance {
                     });
 
             List<String> boatPosition = new ArrayList<>();
-            boatPosition.add("研发室");
+            boatPosition.add("前台");
             MatchFactory.getInstance().registerPlaceholder("boat_position",
                     new PlaceHolderRegister.ICallback() {
                 @Override
@@ -38,7 +38,7 @@ public class TestMultiEntrance {
             });
 
             String[] testGroup = new String[]{
-                "我找不到研发室了"
+                "带我去前台好吗"
             };
 
             int count = 0;
@@ -55,6 +55,7 @@ public class TestMultiEntrance {
                 }
 
                 System.out.println("String: " + testGroup[i] + "  result: " + result.getKey().isSuccess());
+                System.out.println(result.getKey().getMatchWords());
                 System.out.println("optional: " + result.getValue());
 
 //                System.out.println("result : " + result.getKey().isSuccess() + " top : " + result.getKey().getTop());

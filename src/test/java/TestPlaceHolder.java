@@ -18,26 +18,26 @@ public class TestPlaceHolder {
                 .getResourceAsStream("support_placeholder.rule")) {
 
             String rule = IOUtils.toString(in);
-            MatchFactory.getInstance().setSceneRule("food",rule,"eat");
+            MatchFactory.getInstance().setSceneRule("food", rule, "eat");
             List<String> foodNames = new ArrayList<>();
             foodNames.add("milk");
             MatchFactory.getInstance().registerPlaceholder("foodname",
                     new PlaceHolderRegister.ICallback() {
-                @Override
-                public Collection<String> getValue(String label) {
-                    return foodNames;
-                }
-            });
+                        @Override
+                        public Collection<String> getValue(String label) {
+                            return foodNames;
+                        }
+                    });
 
             List<String> firstList = new ArrayList<>();
             firstList.add("d");
             MatchFactory.getInstance().registerPlaceholder("first",
                     new PlaceHolderRegister.ICallback() {
-                @Override
-                public Collection<String> getValue(String label) {
-                    return firstList;
-                }
-            });
+                        @Override
+                        public Collection<String> getValue(String label) {
+                            return firstList;
+                        }
+                    });
 
             List<String> second = new ArrayList<>();
             second.add("abc");
@@ -68,39 +68,47 @@ public class TestPlaceHolder {
                 }
             });
 
-//            String[] testGroup = new String[]{
-//                    "Iwantmilkplease",
-//                    "Iwantwaterplease",
-//                    "Iwantplease"
-//            };
+            String[] testGroup = new String[]{
+                    // true
+                    "Iwantmilkplease",
+                    // false
+                    "Iwantwaterplease",
+                    // false
+                    "Iwantplease"
+            };
 
 //            String[] testGroup = new String[]{
+////                  // true
 //                    "abec",
+//                    // true
 //                    "dbec",
+//                    // true
 //                    "dabcabcbec",
+//                    // true
 //                    "dabcbec",
 //            };
 
-            String[] testGroup = new String[]{
-                    "Iwantuchia"
-            };
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "Iwantuchia"
+//            };
 
             int count = 0;
-            for (int i = 0 ; i < testGroup.length; i++){
-                 MatchFactory.ResultPair<IParseResult,String> result =  MatchFactory.getInstance()
-                         .executeSceneSentence("food",testGroup[i]);
+            for (int i = 0; i < testGroup.length; i++) {
+                MatchFactory.ResultPair<IParseResult, String> result = MatchFactory.getInstance()
+                        .executeSceneSentence("food", testGroup[i]);
 
-                 if (result == null || !result.getKey().isSuccess()){
-                     continue;
-                 }
+                if (result == null || !result.getKey().isSuccess()) {
+                    continue;
+                }
 
-                 System.out.println("result: " + result.getKey() + "match words"
-                         + result.getKey().getMatchWords());
-                 System.out.println("optional: " + result.getValue());
+                System.out.println("result: " + result.getKey() + "match words"
+                        + result.getKey().getMatchWords());
+                System.out.println("optional: " + result.getValue());
             }
 
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,10 +1,56 @@
+@exec = voice_rule13;voice_add
 
-// test go next if no match
+@exec = voice_rule14;voice_minus
 
-@start      = rule;
+@exec = voice_rule1;voice_min
+@exec = voice_rule2;voice_min
+@exec = voice_rule3;voice_min
 
-rule        =  @carer1 @carer2 r3
+@exec = voice_rule4;voice_minus
+@exec = voice_rule5;voice_minus
+@exec = voice_rule6;voice_minus
+@exec = voice_rule7;voice_minus
 
-r1          = 带 | 领
-r2          = 去
-r3          = 值班室
+@exec = voice_rule8;voice_max
+@exec = voice_rule9;voice_max
+
+@exec = voice_rule10;voice_add
+@exec = voice_rule11;voice_add
+@exec = voice_rule12;voice_add
+
+
+voice_rule1 = @carer3;
+voice_rule2 = (@carer1 @carer2 *($));
+voice_rule3 = (@carer2 @carer1 *($));
+
+voice_rule4 = (@carer5 @carer1 *($));
+voice_rule5 = (@carer1 @carer5 *($));
+voice_rule6 = (@carer6 *($));
+voice_rule7 = (@carer7 *($));
+
+voice_rule8 = (@carer8 @carer1 *($));
+voice_rule9 = (@carer1 @carer8 *($));
+
+voice_rule10 = (@carer9 @carer1 *($));
+voice_rule11 = (@carer1 @carer9 *($));
+voice_rule12 = (@carer10 *($));
+
+voice_rule13 = (@carer1 @carer11 *($))
+
+voice_rule14 = (@carer1 @carer12 *($))
+
+r1 = 声 | 音量;
+r2 = 最小 | 最低;
+r3 = 安静 | 静音 | r4;
+r4 = 不要说 [了];
+
+r5 = 小;
+r6 = 再小一点 [儿];
+r7 = 太吵 [了];
+r11 = 太小 [了];
+
+r8 = 最大 | 最高;
+
+r9 = 大 | (高 [点]);
+r10 = 听不见 | (再大 [一] 点);
+r12 = 太大 [了]

@@ -25,10 +25,42 @@ public class TestRepetition {
             String rule = IOUtils.toString(in);
             MatchFactory.getInstance().setRule(key, rule);
 
-            String[] testGroup = new String[]{"aab", "b", "aaaaaaab", "c"};
-//        String[] testGroup = new String[]{"acab","b","ab","cb","aaaaaaaaaa","ccc"};
-//        String[] testGroup = {"bbbabbcbcc"};
-//        String[] testGroup = {"abcab"};
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "aab",
+//                    // true
+//                    "b",
+//                    // true
+//                    "aaaaaaab",
+//                    // false
+//                    "c"
+//            };
+
+//        String[] testGroup = new String[]{
+//                // true
+//                "acab",
+//                // true
+//                "b",
+//                // true
+//                "ab",
+//                // true
+//                "cb",
+//                // false
+//                "aaaaaaaaaa",
+//                // false
+//                "ccc"
+//        };
+
+//        String[] testGroup = {
+//                // true
+//                "bbbabbcbcc"
+//        };
+
+//        String[] testGroup = {
+//                // true
+//                "abcab"
+//        };
+
 //        String[] testGroup = {
 //                // true
 //                "aabcabba",
@@ -41,25 +73,39 @@ public class TestRepetition {
 //                // false
 //                "aabcabc"
 //        };
-//        String[] testGroup = new String[] {"aacababaccb"};
-//        String[] testGroup = new String[] {"ababcabba"};
-//        String[] testGroup = new String[]{"acccabbcbcbca"};
+
+//        String[] testGroup = new String[] {
+//                // true
+//                "aacababaccb"
+//        };
+
 //            String[] testGroup = new String[]{
 //                    // true
-//                    "aaabbbbbbbababab",
-//                    // false
-//                    "aabbbbbbab",
-//                    // false
-//                    "aaabbbbb",
-//                    // true
-//                    "aaabbbbbbb",
-//                    // false
-//                    "aaaa",
-//                    // false
-//                    "bbbbb",
-//                    // false
-//                    "abab",
+//                    "ababcabba"
 //            };
+
+//        String[] testGroup = new String[]{
+//                // true
+//                "acccabbcbcbca"
+//        };
+
+            String[] testGroup = new String[]{
+                    // true
+                    "aaabbbbbbbababab",
+                    // false
+                    "aabbbbbbab",
+                    // false
+                    "aaabbbbb",
+                    // true
+                    "aaabbbbbbb",
+                    // false
+                    "aaaa",
+                    // false
+                    "bbbbb",
+                    // false
+                    "abab",
+            };
+
 //            String[] testGroup = new String[]{
 //                    // true
 //                    "bbbbb",

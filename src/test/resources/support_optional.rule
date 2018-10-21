@@ -2,8 +2,10 @@
 @start      = rule;
 
 
-//rule        = r1 [r2|r4] r3;
-rule        = r1 ((r2 [r6]) | (r4)) r3;
+rule        = r1 [r2|r4] r3;
+//rule        = r1 ((r2 [r6]) | (r4)) r3;
+//rule        = [ r7 (r8 | r9)] r10 ;
+//rule        = r7 (r8 [r8 r9 r7] r9 ) [r10] r8
 
 r1          = 水可;
 r2          = 载;
@@ -11,3 +13,9 @@ r4          = 覆;
 r3          = 舟;
 r5          = 一颗赛艇;
 r6          = Naive;
+
+r7          = a;
+r8          = b;
+r9          = c;
+r10         = d;
+r11         =abc;

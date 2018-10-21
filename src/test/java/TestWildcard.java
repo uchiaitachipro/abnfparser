@@ -24,26 +24,26 @@ public class TestWildcard {
 //
 //            };
 
-//            String[] testGroup = new String[]{
-//                    // true
-//                    "ababaabababaab",
-////                    // false
-//                    "abababababababa",
+            String[] testGroup = new String[]{
+                    // true
+                    "ababaabababaab",
+                    // false
+                    "abababababababa",
 ////                    // true
 //                    "abababaab",
 ////                    // true
 //                    "aabbbababaab"
-//
-//            };
 
-            String[] testGroup = new String[]{
+            };
+
+//            String[] testGroup = new String[]{
 //                    // true
 //                    "ba",
 //                    // true
 //                    "babab",
-                    // false
-                    "baaba"
-            };
+//                    // false
+//                    "baaba"
+//            };
 
 //            String[] testGroup = new String[]{
 //                    // true

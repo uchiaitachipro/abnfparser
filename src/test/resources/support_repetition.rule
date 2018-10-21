@@ -3,7 +3,7 @@
 @start      = rule;
 
 
-rule        = *(r1) r2;
+//rule        = *(r1) r2;
 //rule        = *(r1 | r3) r2;
 //rule        = (*(r3 | r2) r1 r2 *(r2 r3)) r3
 //rule        = *(r1 r2 r3) r1 r2
@@ -11,7 +11,7 @@ rule        = *(r1) r2;
 //rule        = r1 *((r1 r3) | (r1 r2)) (r3 r2)
 //rule        = *(r1 r2) r3 *(r1 | r2)
 //rule        = *(r1 | r3) r2 *(r2 r3) r1
-//rule        = 3*5r1 6*r2 *(r1 r2)
+rule        = 3*5r1 6*r2 *(r1 r2)
 //rule        = *1r1 5*5r2 *2r3
 r1          = a;
 r2          = b;

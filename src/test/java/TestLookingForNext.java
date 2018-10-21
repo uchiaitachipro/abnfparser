@@ -18,23 +18,46 @@ public class TestLookingForNext {
 
             MatchFactory.getInstance().setRule(key,rule);
             String[] testGroup = new String[] {
-                    "乐乐，带我去值班室",
-                    "了了领我去值班室",
-                    "可可请你去值班室",
-                    "了了领我去值班室"
+                    "大",
+                    "声大",
+                    "大声点",
+                    "大点声",
+                    "声音大",
+                    "声音再大一点",
+                    "声音再大点",
+                    "声音大点",
+                    "声音大一点",
+                    "再大一点",
+                    "我听不见",
+                    "听不见",
+                    "小声",
+                    "小声点",
+                    "小声点",
+                    "小点声",
+                    "声音小",
+                    "声音再小一点",
+                    "声音再小点",
+                    "声音小点",
+                    "声音小一点",
+                    "再小一点",
+                    "太吵了",
+                    "最大声",
+                    "声音最大",
+                    "音量最大",
+                    "最大音量",
+                    "最小声",
+                    "声音最小",
+                    "音量最小",
+                    "最小音量",
+                    "静音",
+                    "不要说了",
+                    "安静"
             };
             for (int i = 0 ; i < testGroup.length; i++){
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key,testGroup[i]);
                 System.out.println("result : " + result.isSuccess() + " top : " + result.getTop());
                 System.out.println(result.getMatchWords());
             }
-
-            IParseResult result = MatchFactory.getInstance().executeRule(
-                    "@care(带|领) @care(去) (值班室);go",
-                    "乐乐带我去值班室",
-                    false);
-            System.out.println("result : " + result.isSuccess() + " top : " + result.getTop());
-            System.out.println(result.getMatchWords());
 
         } catch (IOException e) {
             e.printStackTrace();

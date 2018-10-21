@@ -73,7 +73,7 @@ public class ParserContext {
     private int currentPosition = -1;
 
     /**
-     * next symbol start location to match leftover strings
+     * next symbol start location to partialMatch leftover strings
      */
     private int offset;
 
@@ -107,6 +107,8 @@ public class ParserContext {
     private boolean allowAskForUserWhenNoMatch = false;
 
     private boolean goNextIfNoMatch = false;
+
+    private int recentRepetitionMatchCount = 0;
 
     /**
      * default constructor.
@@ -383,12 +385,6 @@ public class ParserContext {
         this.currentPosition = -1;
     }
 
-    public int getCurrentAndConditionMatchIndex(){
-        if (andConditions == null){
-            return 0;
-        }
-        return (currentPosition + 1);
-    }
 
     public void setCurrentPosition(int position){
         this.currentPosition = position;
@@ -430,13 +426,12 @@ public class ParserContext {
         this.currentRepetition = currentRepetition;
     }
 
-
-    public boolean isAllowAskForUserWhenNoMatch() {
-        return allowAskForUserWhenNoMatch;
+    public int getRecentRepetitionMatchCount() {
+        return recentRepetitionMatchCount;
     }
 
-    public void setAllowAskForUserWhenNoMatch(boolean allowAskForUserWhenNoMatch) {
-        this.allowAskForUserWhenNoMatch = allowAskForUserWhenNoMatch;
+    public void setRecentRepetitionMatchCount(int recentRepetitionMatchCount) {
+        this.recentRepetitionMatchCount = recentRepetitionMatchCount;
     }
 
     public boolean isGoNextIfNoMatch() {
@@ -446,6 +441,7 @@ public class ParserContext {
     public void setGoNextIfNoMatch(boolean goNextIfNoMatch) {
         this.goNextIfNoMatch = goNextIfNoMatch;
     }
+
 
     public ParserContext copy(){
         ParserContext context =  new ParserContext();

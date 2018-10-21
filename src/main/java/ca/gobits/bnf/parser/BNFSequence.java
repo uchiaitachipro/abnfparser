@@ -30,6 +30,7 @@ public class BNFSequence {
     public BNFSequence() {
     }
 
+
     /**
      * @param list - list of BNF Symbols
      */

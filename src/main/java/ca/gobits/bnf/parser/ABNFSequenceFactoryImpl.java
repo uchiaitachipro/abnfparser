@@ -14,11 +14,6 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
     private static final String REPETITION_SYMBOL_PREFIX = "_@";
     private static final String REPRETITION_SYMBOL_SUFFIX = "@_";
 
-    private static final String GROUP_SYMBOL_PROPERTY = "@group@";
-
-    private static final String OPTIONAL_SYMBOL_PREFIX = "[";
-    private static final String OPTIONAL_SYMBOL_SUFFIX = "]";
-
     @Override
     public Map<String, List<BNFSequence>> json() {
         return null;
@@ -119,6 +114,12 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
         List<SymbolMetaData> symbols = new ArrayList<SymbolMetaData>(split.length);
 
         for (String ss : split) {
+
+            // split出的字符串可能为空需要检查
+            if (isEmpty(ss)){
+                continue;
+            }
+
             SymbolMetaData symbol = createSymbol(ss);
             symbol.setParentSymbol(parentSymbol);
             symbols.add(symbol);
@@ -150,8 +151,6 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
 
             list.add(s.trim());
         }
-
-//        sortSequenceNames(list);
 
         return list;
     }
@@ -303,7 +302,7 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
     }
 
     private boolean isEmpty(String string){
-        return  string == null || string == "";
+        return  string == null || string.equals("");
     }
 
     private String extractNumberFromString(String sourceString,int startIndex, boolean left){

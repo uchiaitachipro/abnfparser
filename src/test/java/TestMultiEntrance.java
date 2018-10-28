@@ -18,12 +18,17 @@ public class TestMultiEntrance {
             MatchFactory.getInstance().setSceneRule("chat", content, null);
 
             List<String> rootName = new ArrayList<>();
-            rootName.add( "可乐");
+            rootName.add("可乐");
             MatchFactory.getInstance().registerPlaceholder("robot_name",
                     new PlaceHolderRegister.ICallback() {
                         @Override
                         public Collection<String> getValue(String label) {
                             return rootName;
+                        }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+                            return null;
                         }
                     });
 
@@ -31,14 +36,26 @@ public class TestMultiEntrance {
             boatPosition.add("前台");
             MatchFactory.getInstance().registerPlaceholder("boat_position",
                     new PlaceHolderRegister.ICallback() {
-                @Override
-                public Collection<String> getValue(String label) {
-                    return boatPosition;
-                }
-            });
+                        @Override
+                        public Collection<String> getValue(String label) {
+                            return boatPosition;
+                        }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+
+                            String subString = words.substring(offset,offset + 2);
+
+                            if (subString.equals("接待")){
+                                return subString;
+                            }
+                            return null;
+                        }
+                    });
 
             String[] testGroup = new String[]{
-                "带我去前台好吗"
+                    "带我去前台好吗",
+                    "带我去接待好吗"
             };
 
             int count = 0;

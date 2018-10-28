@@ -64,6 +64,9 @@ public class PlaceHolderRegister {
 
 
     public interface ICallback{
+
         Collection<String> getValue(String label);
+
+        String askNextPhrase(String words,int offset);
     }
 }

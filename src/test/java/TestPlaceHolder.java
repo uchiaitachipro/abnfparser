@@ -27,6 +27,14 @@ public class TestPlaceHolder {
                         public Collection<String> getValue(String label) {
                             return foodNames;
                         }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+
+
+
+                            return null;
+                        }
                     });
 
             List<String> firstList = new ArrayList<>();
@@ -36,6 +44,11 @@ public class TestPlaceHolder {
                         @Override
                         public Collection<String> getValue(String label) {
                             return firstList;
+                        }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+                            return null;
                         }
                     });
 
@@ -47,6 +60,11 @@ public class TestPlaceHolder {
                         public Collection<String> getValue(String label) {
                             return second;
                         }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+                            return null;
+                        }
                     });
 
             List<String> thirdList = new ArrayList<>();
@@ -57,6 +75,11 @@ public class TestPlaceHolder {
                         public Collection<String> getValue(String label) {
                             return thirdList;
                         }
+
+                        @Override
+                        public String askNextPhrase(String words, int offset) {
+                            return null;
+                        }
                     });
 
             List<String> fifthList = new ArrayList<>();
@@ -66,16 +89,21 @@ public class TestPlaceHolder {
                 public Collection<String> getValue(String label) {
                     return fifthList;
                 }
+
+                @Override
+                public String askNextPhrase(String words, int offset) {
+                    return null;
+                }
             });
 
-            String[] testGroup = new String[]{
-                    // true
-                    "Iwantmilkplease",
-                    // false
-                    "Iwantwaterplease",
-                    // false
-                    "Iwantplease"
-            };
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "Iwantmilkplease",
+//                    // false
+//                    "Iwantwaterplease",
+//                    // false
+//                    "Iwantplease"
+//            };
 
 //            String[] testGroup = new String[]{
 ////                  // true
@@ -88,10 +116,10 @@ public class TestPlaceHolder {
 //                    "dabcbec",
 //            };
 
-//            String[] testGroup = new String[]{
-//                    // true
-//                    "Iwantuchia"
-//            };
+            String[] testGroup = new String[]{
+                    // true
+                    "Iwantuchia"
+            };
 
             int count = 0;
             for (int i = 0; i < testGroup.length; i++) {

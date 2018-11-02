@@ -25,16 +25,16 @@ public class TestRepetition {
             String rule = IOUtils.toString(in);
             MatchFactory.getInstance().setRule(key, rule);
 
-//            String[] testGroup = new String[]{
-//                    // true
-//                    "aab",
-//                    // true
-//                    "b",
-//                    // true
-//                    "aaaaaaab",
-//                    // false
-//                    "c"
-//            };
+            String[] testGroup = new String[]{
+                    // true
+                    "aab",
+                    // true
+                    "b",
+                    // true
+                    "aaaaaaab",
+                    // false
+                    "c"
+            };
 
 //        String[] testGroup = new String[]{
 //                // true
@@ -89,22 +89,22 @@ public class TestRepetition {
 //                "acccabbcbcbca"
 //        };
 
-            String[] testGroup = new String[]{
-                    // true
-                    "aaabbbbbbbababab",
-                    // false
-                    "aabbbbbbab",
-                    // false
-                    "aaabbbbb",
-                    // true
-                    "aaabbbbbbb",
-                    // false
-                    "aaaa",
-                    // false
-                    "bbbbb",
-                    // false
-                    "abab",
-            };
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "aaabbbbbbbababab",
+//                    // false
+//                    "aabbbbbbab",
+//                    // false
+//                    "aaabbbbb",
+//                    // true
+//                    "aaabbbbbbb",
+//                    // false
+//                    "aaaa",
+//                    // false
+//                    "bbbbb",
+//                    // false
+//                    "abab",
+//            };
 
 //            String[] testGroup = new String[]{
 //                    // true

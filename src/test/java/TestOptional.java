@@ -18,18 +18,18 @@ public class TestOptional {
             String rule = IOUtils.toString(in);
 
             MatchFactory.getInstance().setRule(key, rule);
-            String[] testGroup = new String[]{
-                    // true
-                    "水可载舟",
-                    // true
-                    "水可覆舟",
-                    // true
-                    "水可舟",
-                    // false
-                    "亦可赛艇",
-                    // false
-                    "水很舟"
-            };
+//            String[] testGroup = new String[]{
+//                    // true
+//                    "水可载舟",
+//                    // true
+//                    "水可覆舟",
+//                    // true
+//                    "水可舟",
+//                    // false
+//                    "亦可赛艇",
+//                    // false
+//                    "水很舟"
+//            };
 
 //            String[] testGroup = new String[]{
 //                    // true
@@ -42,14 +42,14 @@ public class TestOptional {
 //                    "水可载覆舟"
 //            };
 
-//            String[] testGroup = new String[]{
-//                    "acd",// true
-//                    "abd",// true
-//                    "d" , // true
-//                    "ad", // false
-//                    "b", // false
-//
-//            };
+            String[] testGroup = new String[]{
+                    "acd",// true
+                    "abd",// true
+                    "d" , // true
+                    "ad", // false
+                    "b", // false
+
+            };
 
             for (int i = 0; i < testGroup.length; i++) {
                 IParseResult result = MatchFactory.getInstance().useABNFToMatch(key, testGroup[i]);

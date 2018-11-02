@@ -1,14 +1,13 @@
-@exec = voice_rule1;go_where_scene
-//@exec = voice_rule2;go_where_scene
-//@exec = voice_rule3;go_where_scene
+@exec = voice_rule301;go_where_scene
+@exec = voice_rule302;go_where_scene
+@exec = voice_rule303;go_where_scene
 
-voice_rule1 = @carer1 (<boat_position>) r10;
-voice_rule2 = @carer2 (<boat_position>) *($);
-voice_rule3 = @care(<boat_position>) r3 *($);
+voice_rule301 = @carer1 (<boat_position>) r4;
+voice_rule302 = @carer2 (<boat_position>) r4;
+voice_rule303 = @care(<boat_position>) r3 r4;
 
-r1 = 带我去 | 那我去 | 我要去 | 我想去 | 我想找 | 领我们 | 送到 | 送去 | 领我 | 到 | 去;
+r1 = 领我们去 | 带我去  | 我要去 | 我想去 | 领我到 | 带我到 | 送到 | 送去 | 领我 | 到 | 去;
+
 r2 = 找不到 | 请问一下 | 问一下 | 请问;
-r3 = 在什么地方 | 怎么去 | 怎么找 | 在哪里 | 在那里 | 是哪 | 在哪;
-
-r10 = [可以吗 | 好吗 | 行吗 | 吧];
-r11 = [了 | 啊 | 呢]
+r3 = 在什么地方 | 怎么去 | 怎么找 | 怎么走 | 在哪里 | 在那里 | 是哪 | 在哪;
+r4 = [可以吗 | 好吗 | 行吗 | 吧 | 啊 | 呀 | 哈 | 呢] [啊];

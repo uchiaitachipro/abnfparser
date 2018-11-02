@@ -2,9 +2,9 @@
 @start      = rule;
 
 
-rule        = r1 [r2|r4] r3;
+//rule        = r1 [r2|r4] r3;
 //rule        = r1 ((r2 [r6]) | (r4)) r3;
-//rule        = [ r7 (r8 | r9)] r10 ;
+rule        = [ r7 (r8 | r9)] r10 ;
 //rule        = r7 (r8 [r8 r9 r7] r9 ) [r10] r8
 
 r1          = 水可;

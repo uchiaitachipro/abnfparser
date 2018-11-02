@@ -33,7 +33,7 @@ public class TestMultiEntrance {
                     });
 
             List<String> boatPosition = new ArrayList<>();
-            boatPosition.add("前台");
+            boatPosition.add("诊室二零");
             MatchFactory.getInstance().registerPlaceholder("boat_position",
                     new PlaceHolderRegister.ICallback() {
                         @Override
@@ -54,8 +54,8 @@ public class TestMultiEntrance {
                     });
 
             String[] testGroup = new String[]{
-                    "带我去前台好吗",
-                    "带我去接待好吗"
+                    "诊室二零怎么去",
+                    "带我去接待吧"
             };
 
             int count = 0;

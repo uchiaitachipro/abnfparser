@@ -175,6 +175,11 @@ public class CustomSymbolFactory {
             }
 
             String string = symbol.replace("@care","");
+
+            if (string.startsWith(OPTIONAL_SYMBOL_PREFIX) || string.startsWith("*")){
+                throw new IllegalArgumentException("@care can't modify rule such as repetition or optional");
+            }
+
             metaData.setGoNextIfNoMatch(true);
             metaData.setName(string);
 

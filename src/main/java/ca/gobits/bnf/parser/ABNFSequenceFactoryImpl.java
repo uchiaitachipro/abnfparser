@@ -312,9 +312,9 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
         int count = sourceString.length();
         while (nextIndex >= 0 && nextIndex < count){
 
-            char charactor = sourceString.charAt(nextIndex);
+            char character = sourceString.charAt(nextIndex);
 
-            if (charactor < '0' || charactor > '9'){
+            if (character < '0' || character > '9'){
                break;
             }
             numberStartIndex = nextIndex;
@@ -354,6 +354,11 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
             String[] repetitions = metaData.split("_");
             int minRepetitionValue = Integer.valueOf(repetitions[0]);
             int maxRepetitionValue = Integer.valueOf(repetitions[1]);
+
+            if (minRepetitionValue > maxRepetitionValue){
+                throw new IllegalArgumentException("repetition value min > max");
+            }
+
             result.setName(ss);
             result.setMinRepetitionTimes(minRepetitionValue);
             result.setMaxRepetitionTimes(maxRepetitionValue);
@@ -379,24 +384,4 @@ public class ABNFSequenceFactoryImpl implements ISequenceFactory {
             }
         }
     }
-
-
-//    /**
-//     * 对或排序中的字符串排序，使字符数量多的始终优先比较。
-//     * 待匹配       aabcdba
-//     * rule        = r3 (r5 | r6) $ r4
-//     * r5          = ab;
-//     * r6          = abc;
-//     *
-//     * 或中用错误的字符串匹配，导致整体不匹配
-//     */
-//    private void sortSequenceNames(final List<String> list) {
-//        Collections.sort(list, new Comparator<String>() {
-//            @Override
-//            public int compare(final String o1, final String o2) {
-//                return o2.length() - o1.length();
-//            }
-//        });
-//    }
-
 }

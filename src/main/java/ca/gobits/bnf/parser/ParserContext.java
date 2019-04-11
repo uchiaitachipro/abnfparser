@@ -232,8 +232,12 @@ public class ParserContext {
         this.currentToken = this.originalToken;
     }
 
-    public Token getOriginalToken() {
-        return originalToken;
+    public void setOriginalToken(Token originalToken) {
+        this.originalToken = originalToken;
+    }
+
+    public void setCurrentToken(Token currentToken){
+        this.currentToken =currentToken;
     }
 
     /**
@@ -243,11 +247,19 @@ public class ParserContext {
         return this.orConditions != null;
     }
 
+    public void setOrConditions(List<BNFSequence> or){
+        this.orConditions = or;
+    }
+
     /**
      * @return boolean
      */
     public boolean hasAndConditions() {
         return this.andConditions != null;
+    }
+
+    public void setAndConditions(BNFSequence andConditions){
+        this.andConditions = andConditions;
     }
 
     /**
@@ -442,7 +454,6 @@ public class ParserContext {
         this.goNextIfNoMatch = goNextIfNoMatch;
     }
 
-
     public ParserContext copy(){
         ParserContext context =  new ParserContext();
         context.currentPosition = this.currentPosition;
@@ -460,6 +471,23 @@ public class ParserContext {
         context.allowAskForUserWhenNoMatch = this.allowAskForUserWhenNoMatch;
         context.goNextIfNoMatch = this.goNextIfNoMatch;
         return context;
+    }
+
+    public void resetAll(){
+        this.currentPosition = -1 ;
+        this.offset = -1;
+        this.state = ParserState.EMPTY;
+        this.originalToken = null;
+        this.currentToken = null;
+        this.orConditions = null;
+        this.andConditions = null;
+        this.repetition = Repetition.NONE;
+        this.parserRepetition = ParserRepetition.NONE;
+        this.minRepetition = 0;
+        this.maxRepetition = 0;
+        this.currentRepetition = 0;
+        this.allowAskForUserWhenNoMatch = false;
+        this.goNextIfNoMatch = false;
     }
 
 }

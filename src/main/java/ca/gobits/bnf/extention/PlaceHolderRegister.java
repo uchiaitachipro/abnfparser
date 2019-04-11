@@ -3,14 +3,17 @@ package ca.gobits.bnf.extention;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaceHolderRegister {
 
     private static volatile PlaceHolderRegister instance;
 
-    private Map<String,ICallback> map = new HashMap<>();
+    private Map<String,ICallback> map = new ConcurrentHashMap<>();
 
-    private Map<String,String> placeHolderValues = new HashMap<>();
+    private ThreadLocal<Map<String,String>> placeHolderValues = new ThreadLocal<>();
+
+//    private Map<String,String> placeHolderValues = new ConcurrentHashMap<>();
 
     private PlaceHolderRegister(){}
 
@@ -37,18 +40,27 @@ public class PlaceHolderRegister {
         map.put(label,callback);
     }
 
-    public void unregister(String label){
+    public void unRegister(String label){
         if (map.containsKey(label)){
             map.remove(label);
         }
     }
 
     public void savePlaceholderValue(String key,String value){
-        placeHolderValues.put(key,value);
+        Map<String,String> map =  placeHolderValues.get();
+        if (map == null){
+            map = new HashMap<>();
+            placeHolderValues.set(map);
+        }
+        map.put(key,value);
     }
 
     public String getPlaceholderRealValue(String key){
-        return placeHolderValues.get(key);
+        Map<String,String> map = placeHolderValues.get();
+        if (map == null){
+            return null;
+        }
+        return map.get(key);
     }
 
     public ICallback getPlaceholderCallback(String label){
@@ -56,6 +68,14 @@ public class PlaceHolderRegister {
             return null;
         }
         return map.get(label);
+    }
+
+    public void clearAllData(){
+        Map<String,String> map = placeHolderValues.get();
+        if (map == null){
+            return;
+        }
+        map.clear();
     }
 
     public void clear(){

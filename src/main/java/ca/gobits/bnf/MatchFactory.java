@@ -1,5 +1,6 @@
 package ca.gobits.bnf;
 
+import ca.gobits.bnf.extention.ParserContextPool;
 import ca.gobits.bnf.extention.PlaceHolderRegister;
 import ca.gobits.bnf.parser.*;
 import ca.gobits.bnf.tokenizer.ABNFTokenizerFactoryImpl;
@@ -42,16 +43,7 @@ public class MatchFactory {
 
     public <T> void setSceneRule(String scene, String rule,T obj){
         Map<String, List<BNFSequence>> map = factory.map(rule);
-        IParser parser = new ABNFParserImpl(map);
-        parser.setTag(obj);
-        if (scenesMap.containsKey(scene)){
-            scenesMap.get(scene).add(parser);
-            return;
-        }
-
-        List<IParser> list = new LinkedList<>();
-        list.add(parser);
-        scenesMap.put(scene,list);
+        setRuleInternal(map,scene,obj);
     }
 
     public void setRule(String tag,InputStream stream){
@@ -62,6 +54,10 @@ public class MatchFactory {
 
     public <T> void setSceneRule(String scene,InputStream stream,T obj){
         Map<String, List<BNFSequence>> map = factory.map(stream);
+        setRuleInternal(map,scene,obj);
+    }
+
+    private <T> void setRuleInternal(Map<String, List<BNFSequence>> map, String scene, T obj){
         IParser parser = new ABNFParserImpl(map);
         parser.setTag(obj);
         if (scenesMap.containsKey(scene)){
@@ -108,11 +104,9 @@ public class MatchFactory {
 
 
     public <T> ResultPair<IParseResult,T> executeSceneSentence(String scene,String content) {
-
         if (content == null || content == "") {
             return null;
         }
-
 
         if (scenesMap.containsKey(scene)) {
             List<IParser> list = scenesMap.get(scene);
@@ -147,6 +141,11 @@ public class MatchFactory {
 
     public void unRegisterPlaceholder(String label){
         PlaceHolderRegister.getInstance().unRegister(label);
+    }
+
+    public void clearCache(){
+        PlaceHolderRegister.getInstance().clearAllData();
+        ParserContextPool.getInstance().clear();
     }
 
     public static void main(String[] args){

@@ -146,7 +146,7 @@ public class MatchFactory {
     }
 
     public void unRegisterPlaceholder(String label){
-        PlaceHolderRegister.getInstance().unregister(label);
+        PlaceHolderRegister.getInstance().unRegister(label);
     }
 
     public static void main(String[] args){

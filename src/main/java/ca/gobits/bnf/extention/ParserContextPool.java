@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ParserContextPool {
 
     private static final int MIN_CAPACITY = 10;
-
     private volatile static ParserContextPool instance;
 
     private ConcurrentLinkedQueue<ParserContext> pool = new ConcurrentLinkedQueue<>();
     private AtomicInteger count = new AtomicInteger(0);
+    private boolean enableCacheObject = true;
 
     private ParserContextPool() {
     }
@@ -40,10 +40,8 @@ public class ParserContextPool {
                                   final int minRepetition,
                                   final int maxRepetition,
                                   final boolean goNextIfNoMatch) {
-        ParserContext context = pool.poll();
-        if (context == null || count.get() < MIN_CAPACITY) {
-            count.addAndGet(1);
-            return new ParserContext(
+        if (!enableCacheObject) {
+            ParserContext p = new ParserContext(
                     sequence,
                     token,
                     parserRepetition,
@@ -51,6 +49,27 @@ public class ParserContextPool {
                     offset,
                     minRepetition,
                     maxRepetition);
+            p.setGoNextIfNoMatch(goNextIfNoMatch);
+            return p;
+        }
+
+        ParserContext context = pool.poll();
+        if (context == null || count.get() < MIN_CAPACITY) {
+            if (context == null){
+                count.set(1);
+            } else {
+                count.addAndGet(1);
+            }
+            context = new ParserContext(
+                    sequence,
+                    token,
+                    parserRepetition,
+                    repetition,
+                    offset,
+                    minRepetition,
+                    maxRepetition);
+            context.setGoNextIfNoMatch(goNextIfNoMatch);
+            return context;
         }
         count.decrementAndGet();
         context.resetAll();
@@ -67,13 +86,21 @@ public class ParserContextPool {
     }
 
     public ParserContext allocate(List<BNFSequence> sd,
-                         Token token,
-                         ParserContext.ParserRepetition parserRepetition,
-                         SymbolMetaData.Repetition rep){
+                                  Token token,
+                                  ParserContext.ParserRepetition parserRepetition,
+                                  SymbolMetaData.Repetition rep) {
+        if (!enableCacheObject){
+            return new ParserContext(sd, token, parserRepetition, rep);
+        }
+
         ParserContext context = pool.poll();
-        if (context == null || count.get() < MIN_CAPACITY){
-            count.addAndGet(1);
-            return new ParserContext(sd,token,parserRepetition,rep);
+        if (context == null || count.get() < MIN_CAPACITY) {
+            if (context == null){
+                count.set(1);
+            } else {
+                count.addAndGet(1);
+            }
+            return new ParserContext(sd, token, parserRepetition, rep);
         }
         count.decrementAndGet();
         context.resetAll();
@@ -87,9 +114,17 @@ public class ParserContextPool {
     }
 
     public ParserContext allocate(ParserContext.ParserState state) {
+        if (!enableCacheObject){
+            return new ParserContext(state);
+        }
+
         ParserContext context = pool.poll();
         if (context == null || count.get() < MIN_CAPACITY) {
-            count.addAndGet(1);
+            if (context == null){
+                count.set(1);
+            } else {
+                count.addAndGet(1);
+            }
             return new ParserContext(state);
         }
         count.decrementAndGet();
@@ -97,6 +132,10 @@ public class ParserContextPool {
         context.setState(state);
         context.setParserRepetition(ParserContext.ParserRepetition.NONE);
         return context;
+    }
+
+    public void setEnableCacheObject(boolean enableCacheObject) {
+        this.enableCacheObject = enableCacheObject;
     }
 
     public void clear() {
@@ -107,5 +146,4 @@ public class ParserContextPool {
         count.addAndGet(1);
         pool.add(context);
     }
-
 }
